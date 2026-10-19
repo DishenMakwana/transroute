@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
   Phone,
@@ -29,13 +29,77 @@ export default function TransportCard({ transport }: TransportCardProps) {
     "all"
   );
 
-  const offices = transport.locations.filter(
-    (loc) => loc.locationType === "office" || loc.locationType === "pickup_only"
+  const isLocationDestinationMatch = (loc: TransportLocation) => {
+    if (
+      transport.matchedDestination &&
+      loc.id === transport.matchedDestination.id
+    ) {
+      return true;
+    }
+    if (transport.matchedDestination) {
+      const destCity = transport.matchedDestination.city.trim().toLowerCase();
+      const destPin = transport.matchedDestination.pinCode?.trim();
+      if (destCity && loc.city.trim().toLowerCase() === destCity) return true;
+      if (destPin && loc.pinCode.trim() === destPin) return true;
+    }
+    return false;
+  };
+
+  const isLocationOriginMatch = (loc: TransportLocation) => {
+    if (transport.matchedOrigin && loc.id === transport.matchedOrigin.id) {
+      return true;
+    }
+    if (transport.matchedOrigin) {
+      const origCity = transport.matchedOrigin.city.trim().toLowerCase();
+      const origPin = transport.matchedOrigin.pinCode?.trim();
+      if (origCity && loc.city.trim().toLowerCase() === origCity) return true;
+      if (origPin && loc.pinCode.trim() === origPin) return true;
+    }
+    return false;
+  };
+
+  const sortLocationsWithMatchesFirst = (list: TransportLocation[]) => {
+    return [...list].sort((a, b) => {
+      // 1. Destination match at the top
+      const aDest = isLocationDestinationMatch(a) ? 1 : 0;
+      const bDest = isLocationDestinationMatch(b) ? 1 : 0;
+      if (aDest !== bDest) return bDest - aDest;
+
+      // 2. Origin match next
+      const aOrig = isLocationOriginMatch(a) ? 1 : 0;
+      const bOrig = isLocationOriginMatch(b) ? 1 : 0;
+      if (aOrig !== bOrig) return bOrig - aOrig;
+
+      return 0;
+    });
+  };
+
+  const sortedAllLocations = useMemo(
+    () => sortLocationsWithMatchesFirst(transport.locations),
+    [transport.locations, transport.matchedDestination, transport.matchedOrigin]
   );
-  const godowns = transport.locations.filter(
-    (loc) =>
-      loc.locationType === "dropoff_only" ||
-      loc.locationType === "pickup_and_dropoff"
+
+  const offices = useMemo(
+    () =>
+      sortLocationsWithMatchesFirst(
+        transport.locations.filter(
+          (loc) =>
+            loc.locationType === "office" || loc.locationType === "pickup_only"
+        )
+      ),
+    [transport.locations, transport.matchedDestination, transport.matchedOrigin]
+  );
+
+  const godowns = useMemo(
+    () =>
+      sortLocationsWithMatchesFirst(
+        transport.locations.filter(
+          (loc) =>
+            loc.locationType === "dropoff_only" ||
+            loc.locationType === "pickup_and_dropoff"
+        )
+      ),
+    [transport.locations, transport.matchedDestination, transport.matchedOrigin]
   );
 
   const displayedLocations =
@@ -43,7 +107,7 @@ export default function TransportCard({ transport }: TransportCardProps) {
       ? offices
       : activeTab === "godowns"
         ? godowns
-        : transport.locations;
+        : sortedAllLocations;
 
   const visibleLocations = showAllLocations
     ? displayedLocations
@@ -141,26 +205,35 @@ export default function TransportCard({ transport }: TransportCardProps) {
 
             {/* Matched Route Notice if Search Active */}
             {(transport.matchedOrigin || transport.matchedDestination) && (
-              <div className="mt-2.5 p-2 rounded-xl bg-orange-950/40 border border-orange-800/60 text-xs text-orange-200 flex items-center gap-2">
-                <MapPin className="h-3.5 w-3.5 text-orange-400 shrink-0" />
-                <div className="flex-1 flex flex-wrap items-center gap-1.5 text-[11px]">
-                  <span className="font-semibold text-orange-300">Route:</span>
+              <div className="mt-2.5 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-950/80 border border-zinc-800 text-xs text-zinc-200 w-fit max-w-full shadow-xs">
+                <span className="font-bold text-zinc-400 text-[10px] uppercase tracking-wider">
+                  Route:
+                </span>
+                <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
                   {transport.matchedOrigin ? (
-                    <span className="font-medium bg-zinc-950 px-1.5 py-0.5 rounded border border-orange-700 text-orange-100">
-                      {transport.matchedOrigin.city} (
-                      {transport.matchedOrigin.pinCode})
+                    <span className="inline-flex items-center gap-1 font-semibold bg-orange-950/40 px-2 py-0.5 rounded-md border border-orange-500/40 text-orange-200 shadow-2xs">
+                      <MapPin className="h-3 w-3 text-orange-400" />
+                      <span>
+                        {transport.matchedOrigin.city} (
+                        {transport.matchedOrigin.pinCode})
+                      </span>
                     </span>
                   ) : (
-                    <span className="text-zinc-400">Any Origin</span>
+                    <span className="text-zinc-500 italic">Any Origin</span>
                   )}
-                  <span className="text-orange-400">→</span>
+                  <span className="text-zinc-500 font-bold px-0.5">→</span>
                   {transport.matchedDestination ? (
-                    <span className="font-medium bg-zinc-950 px-1.5 py-0.5 rounded border border-orange-700 text-orange-100">
-                      {transport.matchedDestination.city} (
-                      {transport.matchedDestination.pinCode})
+                    <span className="inline-flex items-center gap-1 font-semibold bg-emerald-950/40 px-2 py-0.5 rounded-md border border-emerald-500/40 text-emerald-200 shadow-2xs">
+                      <MapPin className="h-3 w-3 text-emerald-400" />
+                      <span>
+                        {transport.matchedDestination.city} (
+                        {transport.matchedDestination.pinCode})
+                      </span>
                     </span>
                   ) : (
-                    <span className="text-zinc-400">Any Destination</span>
+                    <span className="text-zinc-500 italic">
+                      Any Destination
+                    </span>
                   )}
                 </div>
               </div>
@@ -319,18 +392,30 @@ export default function TransportCard({ transport }: TransportCardProps) {
           {visibleLocations.map((loc) => {
             const isOffice = loc.locationType === "office";
             const mapsUrl = getGoogleMapsLink(loc);
+            const isDestMatch = isLocationDestinationMatch(loc);
+            const isOrigMatch = isLocationOriginMatch(loc);
 
             return (
               <div
                 key={loc.id}
-                className="p-3 bg-zinc-900/90 rounded-xl border border-zinc-800/80 shadow-inner flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                className={`p-3 rounded-xl shadow-inner flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 transition-all ${
+                  isDestMatch
+                    ? "bg-gradient-to-r from-emerald-950/35 via-zinc-900/95 to-zinc-900/95 border-2 border-emerald-500/90 shadow-emerald-500/10 ring-1 ring-emerald-500/30"
+                    : isOrigMatch
+                      ? "bg-gradient-to-r from-orange-950/30 via-zinc-900/95 to-zinc-900/95 border-2 border-orange-500/80 shadow-orange-500/10 ring-1 ring-orange-500/30"
+                      : "bg-zinc-900/90 border border-zinc-800/80"
+                }`}
               >
                 <div className="flex items-start gap-2.5">
                   <div
                     className={`p-1.5 rounded-lg shrink-0 mt-0.5 ${
-                      isOffice
-                        ? "bg-sky-950/60 text-sky-400 border border-sky-850"
-                        : "bg-emerald-950/60 text-emerald-400 border border-emerald-850"
+                      isDestMatch
+                        ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/50"
+                        : isOrigMatch
+                          ? "bg-orange-500/20 text-orange-400 border border-orange-500/50"
+                          : isOffice
+                            ? "bg-sky-950/60 text-sky-400 border border-sky-850"
+                            : "bg-zinc-800 text-zinc-400 border border-zinc-700/60"
                     }`}
                   >
                     {isOffice ? (
@@ -347,6 +432,18 @@ export default function TransportCard({ transport }: TransportCardProps) {
                       <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-zinc-800 text-zinc-300 border border-zinc-700/60">
                         {loc.locationType.replace(/_/g, " ")}
                       </span>
+                      {isDestMatch && (
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center gap-1">
+                          <MapPin className="h-2.5 w-2.5 text-emerald-400" />
+                          <span>Destination Hub</span>
+                        </span>
+                      )}
+                      {isOrigMatch && (
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-orange-500/20 text-orange-400 border border-orange-500/40 flex items-center gap-1">
+                          <MapPin className="h-2.5 w-2.5 text-orange-400" />
+                          <span>Origin Hub</span>
+                        </span>
+                      )}
                     </div>
                     <p className="text-[11px] text-zinc-400 mt-0.5 leading-snug">
                       {loc.address}, {loc.city}, {loc.state} -{" "}
@@ -366,7 +463,18 @@ export default function TransportCard({ transport }: TransportCardProps) {
                   </div>
                 </div>
 
-                <div className="self-end sm:self-auto shrink-0">
+                <div className="flex items-center gap-1.5 self-end sm:self-auto shrink-0">
+                  {loc.contactPhone && (
+                    <a
+                      href={`tel:${getCleanPhone(loc.contactPhone)}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 hover:text-white transition-colors cursor-pointer"
+                      title={`Call ${loc.name} at ${loc.contactPhone}`}
+                    >
+                      <Phone className="h-3 w-3 text-emerald-400" />
+                      <span>Call</span>
+                    </a>
+                  )}
                   <a
                     href={mapsUrl}
                     target="_blank"
