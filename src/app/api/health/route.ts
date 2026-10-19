@@ -1,4 +1,7 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+
+dotenv.config();
+
 import { NextResponse } from "next/server";
 import { pool } from "@/db/db";
 

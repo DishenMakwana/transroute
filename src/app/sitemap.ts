@@ -1,5 +1,8 @@
+import dotenv from "dotenv";
 import type { MetadataRoute } from "next";
 import { getAllTransportsWithDetails } from "@/db/storage";
+
+dotenv.config();
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://transroute.in";
