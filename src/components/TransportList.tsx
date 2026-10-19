@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import {
   PackageX,
   RotateCcw,
@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { TransportListProps } from "@/types";
 import TransportCard from "./TransportCard";
+import Pagination from "./Pagination";
 import { FACILITY_OPTIONS } from "./FilterModal";
 import {
   formatCurrency,
@@ -30,6 +31,10 @@ export default function TransportList({
   onFilterChange,
   onResetFilters,
   onOpenFilterModal,
+  currentPage: controlledPage,
+  pageSize: controlledPageSize,
+  onPageChange: controlledOnPageChange,
+  onPageSizeChange: controlledOnPageSizeChange,
 }: TransportListProps) {
   // Compute how many non-default filters are active
   const activeFilterCount = useMemo(() => {
@@ -42,6 +47,49 @@ export default function TransportList({
     if (filters?.sortBy && filters?.sortBy !== "price_asc") count++;
     return count;
   }, [filters]);
+
+  const [internalPage, setInternalPage] = useState(1);
+  const [internalPageSize, setInternalPageSize] = useState(10);
+  const feedTopRef = useRef<HTMLDivElement>(null);
+
+  const currentPage = controlledPage ?? internalPage;
+  const pageSize = controlledPageSize ?? internalPageSize;
+
+  // Auto-reset to page 1 whenever filters or query change (for uncontrolled usage)
+  useEffect(() => {
+    if (!controlledOnPageChange) {
+      setInternalPage(1);
+    }
+  }, [filters, transports.length, controlledOnPageChange]);
+
+  // Paginated slice
+  const paginatedTransports = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize;
+    return transports.slice(startIndex, startIndex + pageSize);
+  }, [transports, currentPage, pageSize]);
+
+  const handlePageChange = (newPage: number) => {
+    if (controlledOnPageChange) {
+      controlledOnPageChange(newPage);
+    } else {
+      setInternalPage(newPage);
+    }
+    if (feedTopRef.current) {
+      feedTopRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  const handlePageSizeChange = (newSize: number) => {
+    if (controlledOnPageSizeChange) {
+      controlledOnPageSizeChange(newSize);
+    } else {
+      setInternalPageSize(newSize);
+      setInternalPage(1);
+    }
+    if (feedTopRef.current) {
+      feedTopRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   if (isLoading) {
     return (
@@ -104,7 +152,7 @@ export default function TransportList({
   )?.label.split(" (")[0];
 
   return (
-    <div className="relative z-0 mt-4 space-y-3">
+    <div ref={feedTopRef} className="relative z-0 mt-4 space-y-3 scroll-mt-24">
       {/* Sleek Results Header: Counts & Active Removable Filter Pills */}
       <div className="flex flex-wrap items-center justify-between gap-2 px-1 text-xs text-zinc-400 font-medium">
         <div className="flex flex-wrap items-center gap-2">
@@ -215,10 +263,21 @@ export default function TransportList({
 
       {/* Cards Feed */}
       <div className="grid grid-cols-1 gap-3.5">
-        {transports.map((transport) => (
+        {paginatedTransports.map((transport) => (
           <TransportCard key={transport.id} transport={transport} />
         ))}
       </div>
+
+      {/* Pagination Controls */}
+      <Pagination
+        currentPage={currentPage}
+        pageSize={pageSize}
+        totalCount={totalCount}
+        onPageChange={handlePageChange}
+        onPageSizeChange={handlePageSizeChange}
+        pageSizeOptions={[10, 20, 50]}
+        className="mt-5"
+      />
     </div>
   );
 }

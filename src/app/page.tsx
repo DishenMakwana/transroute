@@ -78,10 +78,23 @@ function HomePageContent() {
           : "price_asc",
     };
 
+    const pageParam = searchParams.get("page");
+    const pageSizeParam = searchParams.get("pageSize");
+    const parsedPage =
+      pageParam && !isNaN(Number(pageParam)) && Number(pageParam) > 0
+        ? Number(pageParam)
+        : 1;
+    const parsedPageSize =
+      pageSizeParam && [10, 20, 50].includes(Number(pageSizeParam))
+        ? Number(pageSizeParam)
+        : 10;
+
     return {
       source: src,
       destination: dest,
       filters: parsedFilters,
+      page: parsedPage,
+      pageSize: parsedPageSize,
     };
   }, [searchParams]);
 
@@ -99,6 +112,8 @@ function HomePageContent() {
     initialParams.destination
   );
   const [filters, setFilters] = useState<SearchFilters>(initialParams.filters);
+  const [currentPage, setCurrentPage] = useState<number>(initialParams.page);
+  const [pageSize, setPageSize] = useState<number>(initialParams.pageSize);
 
   // Analytics State
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
@@ -127,6 +142,12 @@ function HomePageContent() {
     if (filters.sortBy && filters.sortBy !== "price_asc") {
       params.set("sortBy", filters.sortBy);
     }
+    if (currentPage > 1) {
+      params.set("page", String(currentPage));
+    }
+    if (pageSize !== 10) {
+      params.set("pageSize", String(pageSize));
+    }
 
     const queryString = params.toString();
     const newUrl = queryString ? `?${queryString}` : window.location.pathname;
@@ -135,7 +156,7 @@ function HomePageContent() {
     if (currentQuery !== queryString) {
       window.history.replaceState(null, "", newUrl);
     }
-  }, [source, destination, filters]);
+  }, [source, destination, filters, currentPage, pageSize]);
 
   // Synchronize browser history navigation (Back / Forward)
   useEffect(() => {
@@ -150,6 +171,8 @@ function HomePageContent() {
       const wUnit = current.get("weightUnit");
       const bUnit = current.get("boxSizeUnit");
       const sort = current.get("sortBy");
+      const pageParam = current.get("page");
+      const pageSizeParam = current.get("pageSize");
 
       setSource(src);
       setDestination(dest);
@@ -175,6 +198,16 @@ function HomePageContent() {
             ? (sort as SortOption)
             : "price_asc",
       });
+      setCurrentPage(
+        pageParam && !isNaN(Number(pageParam)) && Number(pageParam) > 0
+          ? Number(pageParam)
+          : 1
+      );
+      setPageSize(
+        pageSizeParam && [10, 20, 50].includes(Number(pageSizeParam))
+          ? Number(pageSizeParam)
+          : 10
+      );
     };
 
     window.addEventListener("popstate", handlePopState);
@@ -268,21 +301,34 @@ function HomePageContent() {
   const handleSwap = () => {
     setSource(destination);
     setDestination(source);
+    setCurrentPage(1);
   };
 
   const handleClear = () => {
     setSource("");
     setDestination("");
+    setCurrentPage(1);
   };
 
   const handleResetFilters = () => {
     setSource("");
     setDestination("");
     setFilters({ sortBy: "price_asc" });
+    setCurrentPage(1);
   };
 
   const handleFilterChange = (partial: Partial<SearchFilters>) => {
     setFilters((prev) => ({ ...prev, ...partial }));
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
+  const handlePageSizeChange = (newSize: number) => {
+    setPageSize(newSize);
+    setCurrentPage(1);
   };
 
   const activeFilterCount = useMemo(() => {
@@ -367,8 +413,14 @@ function HomePageContent() {
         <SearchBar
           source={source}
           destination={destination}
-          onSourceChange={setSource}
-          onDestinationChange={setDestination}
+          onSourceChange={(val) => {
+            setSource(val);
+            setCurrentPage(1);
+          }}
+          onDestinationChange={(val) => {
+            setDestination(val);
+            setCurrentPage(1);
+          }}
           onSwap={handleSwap}
           onClear={handleClear}
           availableCities={availableCities}
@@ -386,6 +438,10 @@ function HomePageContent() {
           onFilterChange={handleFilterChange}
           onResetFilters={handleResetFilters}
           onOpenFilterModal={() => setIsFilterModalOpen(true)}
+          currentPage={currentPage}
+          pageSize={pageSize}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
         />
 
         {/* Market Intelligence Route Discovery Card */}

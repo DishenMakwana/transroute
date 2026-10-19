@@ -66,6 +66,10 @@ export interface TransportListProps {
   onFilterChange: (newFilters: Partial<SearchFilters>) => void;
   onResetFilters: () => void;
   onOpenFilterModal: () => void;
+  currentPage?: number;
+  pageSize?: number;
+  onPageChange?: (page: number) => void;
+  onPageSizeChange?: (size: number) => void;
 }
 
 export interface FilterModalProps {
@@ -108,4 +112,14 @@ export type FacilityTabFilter =
 export interface FreightEstimatorState {
   unit: string;
   quantity: number;
+}
+
+export interface PaginationProps {
+  currentPage: number;
+  pageSize: number;
+  totalCount: number;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (size: number) => void;
+  pageSizeOptions?: number[];
+  className?: string;
 }

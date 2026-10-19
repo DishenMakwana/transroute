@@ -27,3 +27,7 @@
 ### Task #7: Unify Official Project Logo Across All Surfaces
 - **Goal**: Ingest user's uploaded emblem, generate vector SVG (`logo.svg`, `icon.svg`), transparent-padded 512×512 PNG, multi-resolution `favicon.ico`, Apple touch icon, and OpenGraph card; replace generic Lucide `Truck` in Header branding, 404 page, and carrier fallback.
 - **Result**: All 4 verification gates passed cleanly (`format`, `lint`, `knip`, `build` exit code 0).
+
+### Task #8: Transport List Pagination & Page Size Selection
+- **Goal**: Add pagination bar below transport list with record counter (*"Showing 1 to 10 of 16 carriers"*), selectable page size pills (`10`, `20`, `50`, default `10`), and navigation buttons matching reference screenshot.
+- **Result**: Implemented `Pagination.tsx`, updated `TransportList.tsx` with smooth scroll and auto-reset; all 4 verification gates passed cleanly (`format`, `lint`, `knip`, `build` exit code 0).
