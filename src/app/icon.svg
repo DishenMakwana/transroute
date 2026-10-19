@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Orange Radial & Linear Gradient -->
+    <radialGradient id="logoRadial" cx="50%" cy="38%" r="65%">
+      <stop offset="0%" stop-color="#ff8e00" />
+      <stop offset="60%" stop-color="#f56500" />
+      <stop offset="100%" stop-color="#cc3e00" />
+    </radialGradient>
+    <linearGradient id="rimGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#4a1800" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#260800" stop-opacity="0.9" />
+    </linearGradient>
+    <filter id="innerGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowDiff" />
+      <feFlood flood-color="#000000" flood-opacity="0.35" />
+      <feComposite in2="shadowDiff" operator="in" />
+      <feComposite in2="SourceGraphic" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Outer Dark Cushion -->
+  <rect x="20" y="20" width="472" height="472" rx="132" fill="#09090b" opacity="0.3" />
+
+  <!-- Outer Rim Stroke -->
+  <rect x="22" y="22" width="468" height="468" rx="130" fill="none" stroke="url(#rimGrad)" stroke-width="12" />
+
+  <!-- Main Orange Squircle Body -->
+  <rect x="26" y="26" width="460" height="460" rx="124" fill="url(#logoRadial)" />
+
+  <!-- Subtle Top Highlight Arch -->
+  <path d="M 90 60 Q 256 38 422 60" fill="none" stroke="#ffa333" stroke-width="4" opacity="0.5" stroke-linecap="round" />
+
+  <!-- Delivery Van / Cargo Truck Line-Art Motif -->
+  <g transform="translate(4, -2)" stroke="#ffffff" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- Cargo Box Compartment (Left) -->
+    <!-- Starts at bottom left of box, goes up, rounds top corners, goes down to cab divider -->
+    <path d="M 174 300 V 204 C 174 184 186 170 208 170 H 250 C 270 170 282 184 282 204 V 300" />
+
+    <!-- Driver Cab Compartment (Right) -->
+    <!-- From box divider, horizontal cab roof, diagonal windshield, down front bumper to front wheel -->
+    <path d="M 282 210 H 304 C 314 210 322 216 328 224 L 358 266 C 363 273 365 281 365 288 V 300" />
+
+    <!-- Chassis Base Line: Left Edge to Rear Wheel -->
+    <path d="M 174 300 H 188" />
+
+    <!-- Chassis Base Line: Between Wheels -->
+    <path d="M 236 300 H 280" />
+
+    <!-- Chassis Base Line: Front Wheel to Front Bumper -->
+    <path d="M 328 300 H 365" />
+
+    <!-- Rear Hollow Wheel (Thick Circle) -->
+    <circle cx="212" cy="304" r="18" fill="none" stroke="#ffffff" stroke-width="22" />
+
+    <!-- Front Hollow Wheel (Thick Circle) -->
+    <circle cx="304" cy="304" r="18" fill="none" stroke="#ffffff" stroke-width="22" />
+  </g>
+</svg>

@@ -1,0 +1,12 @@
+[
+  { "source": "app_page", "target": "comp_searchbar", "relation": "renders" },
+  { "source": "app_page", "target": "comp_transportlist", "relation": "renders" },
+  { "source": "app_page", "target": "comp_filtermodal", "relation": "renders" },
+  { "source": "comp_searchbar", "target": "comp_citysearch", "relation": "renders" },
+  { "source": "comp_transportlist", "target": "comp_transportcard", "relation": "renders" },
+  { "source": "app_page", "target": "api_transports", "relation": "calls" },
+  { "source": "api_transports", "target": "db_storage", "relation": "invokes" },
+  { "source": "api_analytics", "target": "db_storage", "relation": "invokes" },
+  { "source": "db_storage", "target": "db_schema", "relation": "queries" },
+  { "source": "db_storage", "target": "helpers_formatters", "relation": "uses" }
+]

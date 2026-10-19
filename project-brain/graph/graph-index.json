@@ -1,0 +1,10 @@
+{
+  "byType": {
+    "page": ["app_page", "analytics_page", "transport_detail_page"],
+    "component": ["comp_searchbar", "comp_citysearch", "comp_filtermodal", "comp_transportlist", "comp_transportcard"],
+    "api": ["api_transports", "api_analytics", "api_export"],
+    "service": ["db_storage"],
+    "schema": ["db_schema"],
+    "helper": ["helpers_formatters"]
+  }
+}

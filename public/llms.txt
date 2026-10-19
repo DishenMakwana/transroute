@@ -1,0 +1,39 @@
+# TransRoute — Indian Box & Product Cargo Transport Finder
+
+> TransRoute is an open B2B freight discovery platform, directory, and rate comparison engine for domestic LTL (Less-Than-Truckload) parcel booking offices, carton dispatch godowns, and road transport operators across India.
+
+## Mission & Scope
+TransRoute specializes exclusively in boxed parcel freight, cartons, packages, and master-carton dispatches. It indexes verified road transport booking offices, pickup godowns, and delivery hubs across major Indian industrial trade corridors (Gujarat, Maharashtra, Delhi NCR, Karnataka, Tamil Nadu, Telangana, Rajasthan, West Bengal).
+
+## Core Capabilities
+- **Hub & Godown Directory**: Search booking offices, transit godowns, pickup-only hubs, and delivery centers with verified phone numbers, street addresses, and GST credentials.
+- **Transparent Freight Tariffs**: Standardized pricing models across per-kilogram rates (₹/kg), quintal/metric tonne rates, and box-size classifications (Small Box <8kg, Medium Box <25kg, Large Master Box <50kg, Per CFT, Per CBM).
+- **Postal PIN Code Matching**: Direct search by 6-digit Indian Postal PIN codes (e.g., 382427 Aslali, 400009 Masjid Bunder, 110006 Chandni Chowk, 560002 Kalasipalyam).
+- **Live IST Operating Hours**: Real-time evaluation of Indian Standard Time (UTC+5:30) operating hours to detect whether booking godowns are currently accepting parcel drop-offs.
+- **Trade Corridor Routing**: Pre-indexed high-density industrial corridors such as Ahmedabad ↔ Mumbai, Surat ↔ Delhi, Pune ↔ Bengaluru, and Rajkot ↔ Indore.
+
+## System Architecture & Data Schema
+Each transport record provides structured metadata:
+- **Transport Entity**: ID, Legal Business Name, GST Number (15-character statutory format), Primary Phone Number, Verification Status.
+- **Facility Locations**: Location Type (`office` | `godown` | `pickup_and_dropoff` | `pickup_only` | `dropoff_only`), Street Address, City, State, 6-digit Postal PIN Code, Latitude/Longitude coordinates, Business Hours (Start & End in HH:MM IST), Facility Contact Number.
+- **Pricing Tariffs**: Tariff Model (`weight` | `box_size`), Base Rate in INR (₹), Unit Descriptor (`kg`, `g`, `quintal`, `tonne`, `small_box`, `medium_box`, `large_box`, `per_cft`, `per_cbm`), Rate Condition Notes.
+
+## Machine & API Access
+AI agents, RAG pipelines, and automated aggregators can interface with TransRoute via REST endpoints:
+- `GET /api/transports`: Search carriers with query parameters:
+  - `source`: Origin city or 6-digit postal PIN code
+  - `destination`: Destination city or 6-digit postal PIN code
+  - `weightUnit`: Filter by accepted weight tariff (`kg`, `g`, `quintal`, `tonne`)
+  - `boxSizeUnit`: Filter by box tariff (`small_box`, `medium_box`, `large_box`, `per_cft`, `per_cbm`)
+  - `minPrice` / `maxPrice`: Numerical tariff bounds in INR
+  - `locationType`: Filter by facility classification (`office`, `godown`, `pickup_and_dropoff`)
+  - `openNow`: `true` to filter carriers with active IST operational hours
+  - `sortBy`: `price_asc`, `price_desc`, `name_asc`, `name_desc`, `hours`
+- `GET /api/transports/:id`: Full carrier dossier with verified godown addresses, contact roster, and tariff breakdown.
+- `GET /api/analytics`: Aggregated network metrics (active carrier count, verified hubs, top freight corridors, price spreads).
+- `GET /api/health`: Automated uptime and storage connectivity monitor.
+
+## Key Resources
+- [Full LLM Knowledge Graph](/llms-full.txt): Complete technical dossier with corridor directories, tariff formulas, and city indexes.
+- [XML Sitemap](/sitemap.xml): Machine-readable index of all live pages and carrier profiles.
+- [Robots Directives](/robots.txt): Machine crawler allowances and sitemap locator.

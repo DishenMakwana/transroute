@@ -1,0 +1,16 @@
+[
+  { "id": "app_page", "label": "HomePage", "type": "page", "path": "src/app/page.tsx" },
+  { "id": "analytics_page", "label": "AnalyticsPage", "type": "page", "path": "src/app/analytics/page.tsx" },
+  { "id": "transport_detail_page", "label": "TransportDetailPage", "type": "page", "path": "src/app/transports/[id]/page.tsx" },
+  { "id": "api_transports", "label": "TransportsAPI", "type": "api", "path": "src/app/api/transports/route.ts" },
+  { "id": "api_analytics", "label": "AnalyticsAPI", "type": "api", "path": "src/app/api/analytics/route.ts" },
+  { "id": "api_export", "label": "ExportAPI", "type": "api", "path": "src/app/api/export/route.ts" },
+  { "id": "comp_searchbar", "label": "SearchBar", "type": "component", "path": "src/components/SearchBar.tsx" },
+  { "id": "comp_citysearch", "label": "CitySearchInput", "type": "component", "path": "src/components/CitySearchInput.tsx" },
+  { "id": "comp_filtermodal", "label": "FilterModal", "type": "component", "path": "src/components/FilterModal.tsx" },
+  { "id": "comp_transportlist", "label": "TransportList", "type": "component", "path": "src/components/TransportList.tsx" },
+  { "id": "comp_transportcard", "label": "TransportCard", "type": "component", "path": "src/components/TransportCard.tsx" },
+  { "id": "db_storage", "label": "StorageEngine", "type": "service", "path": "src/db/storage.ts" },
+  { "id": "db_schema", "label": "DatabaseSchema", "type": "schema", "path": "src/db/schema.ts" },
+  { "id": "helpers_formatters", "label": "Formatters", "type": "helper", "path": "src/helpers/formatters.ts" }
+]

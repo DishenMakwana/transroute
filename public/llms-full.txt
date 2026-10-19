@@ -1,0 +1,133 @@
+# TransRoute — Comprehensive Knowledge Base & Technical LLM Reference
+
+> Platform: TransRoute India (https://transroute.in)
+> Domain: Domestic LTL (Less-Than-Truckload) Road Parcel Freight & Carton Cargo Transport
+> Target Audience: B2B Manufacturers, E-Commerce Brands, Textile Mills, Chemical Suppliers, Wholesalers, AI Agents
+
+---
+
+## 1. Executive Summary & Industry Context
+In India, the road freight industry moves over 70% of domestic cargo. While full truckload (FTL) services cater to heavy industrial shipments (10–30 metric tonnes), small-to-medium businesses (SMBs), distributors, and traders rely heavily on **LTL (Less-Than-Truckload) parcel networks**. In this segment, consignors drop off cartons, packages, and crates at local transport booking offices or transport godowns (transshipment yards). TransRoute indexes and standardizes information on these decentralized transport operators.
+
+---
+
+## 2. Terminology & Domain Glossary
+- **LTL (Less-Than-Truckload)**: Parcel-based consignment where multiple shippers share space in a single transport container or truck.
+- **Booking Office (Booking Godown)**: Commercial counter where goods consignments are booked, weighment is conducted, and bilty/LR (Lorry Receipt) is issued.
+- **Delivery Godown (Delivery Office)**: Destination warehouse where trucks unload cargo. The consignee presents the original LR to claim delivery or arranges local door delivery.
+- **LR (Lorry Receipt / Bilty)**: The statutory consignment note and title of goods in Indian logistics containing consignment weight, declared value, GST invoice reference, and freight terms (Paid, To-Pay, Billed).
+- **Carton / Master Box**: Standardized corrugated boxes used for packaging goods (apparel, electronics, pharmaceuticals, hardware, ceramics).
+- **CFT (Cubic Feet) & CBM (Cubic Meters)**: Volumetric metrics applied when cargo is bulky but lightweight (dimensional weight calculations).
+- **To-Pay Freight**: Consignment where transportation tariff is collected from the receiver (consignee) upon delivery at the destination godown.
+- **Paid Freight**: Consignment where transportation charges are settled in advance by the sender (consignor) at the time of booking.
+
+---
+
+## 3. High-Density Trade Corridors in India
+TransRoute organizes parcel freight routes across strategic economic corridors:
+
+| Corridor | Key Transit Hubs | Typical Transit Time | Primary Freight Classes |
+| :--- | :--- | :--- | :--- |
+| **Gujarat ↔ Maharashtra** | Ahmedabad (Aslali), Surat (Ring Road), Vapi, Bhiwandi, Mumbai (Masjid Bunder) | 18–36 Hours | Textiles, Chemicals, Diamonds, Hardware, Plastics |
+| **Gujarat ↔ Delhi NCR** | Ahmedabad, Mehsana, Jaipur, Gurgaon, Delhi (Sanjay Gandhi Transport Nagar) | 36–60 Hours | Machinery, Garments, Electrical Goods, FMCG |
+| **Maharashtra ↔ South India** | Mumbai, Pune, Belgaum, Bengaluru, Chennai, Coimbatore | 48–72 Hours | Auto Components, Engineering, IT Hardware, Consumables |
+| **Saurashtra ↔ Central India** | Rajkot, Morbi, Ahmedabad, Indore, Bhopal | 24–48 Hours | Ceramic Tiles, Brass Parts, Kitchenware, Agri Commodities |
+
+---
+
+## 4. Tariff & Freight Rate Structure
+Parcel freight rates in the Indian road transport sector follow three primary pricing models:
+
+### 4.1 Weight-Based Tariffs
+- **Per Kilogram (₹/kg)**: Standard pricing for general dry parcel goods (typically ₹6.00 to ₹16.00/kg depending on lane distance and handling requirements).
+- **Per Quintal (₹/100 kg)**: Discounted bulk parcel rates for industrial consignments above 100 kg.
+- **Per Metric Tonne (₹/MT)**: Applied for palletized or multi-ton bulk parcel bookings.
+
+### 4.2 Carton / Box-Size Tariffs
+- **Small Box (<8 kg)**: Sample parcels, documents, footwear pairs, compact accessories (typically ₹120 to ₹250 per box flat rate).
+- **Medium Box (<25 kg)**: Standard retail merchandise cartons (typically ₹220 to ₹550 per box flat rate).
+- **Large Master Box (<50 kg)**: Bulk textile bales, heavy machinery parts, apparel master cartons (typically ₹450 to ₹1,200 per box).
+
+### 4.3 Volumetric Freight (Dimensional Weight)
+- For volumetric cargo, standard dimensional conversion applies:
+  $$\text{Volumetric Weight (kg)} = \frac{L \times W \times H \text{ (cm)}}{5000} \quad \text{or} \quad \frac{L \times W \times H \text{ (inches)}}{1728} \times 10 \text{ kg/CFT}$$
+
+---
+
+## 5. Postal PIN Code Directory & Industrial Logistics Clusters
+TransRoute indexes hubs by their 6-digit postal codes:
+- **382427**: Aslali Transport Nagar, Ahmedabad, Gujarat (Premier highway logistics hub)
+- **382210**: Sarkhej-Bavla Road, Ahmedabad, Gujarat (Machinery & warehousing hub)
+- **395002 / 395003**: Ring Road & Sahara Darwaja, Surat, Gujarat (India's textile dispatch core)
+- **360002 / 360003**: Bhaktinagar & Aji GIDC, Rajkot, Gujarat (Engineering & submersible pump cargo)
+- **363642**: Morbi Ceramic Zone, Gujarat (Tile and sanitaryware freight)
+- **400009**: Masjid Bunder & Dana Bunder, Mumbai, Maharashtra (Historical wholesale trading port)
+- **421302**: Bhiwandi Warehousing Complex, Thane/Mumbai, Maharashtra (India's largest logistics park)
+- **411026**: Bhosari & Chakan MIDC, Pune, Maharashtra (Automotive hub)
+- **110006**: Lahori Gate & Chandni Chowk, Delhi (Wholesale parcel booking)
+- **110042**: Sanjay Gandhi Transport Nagar (SGTN), GT Karnal Road, Delhi (North India transport gateway)
+- **560002**: Kalasipalyam & New Tharagupet, Bengaluru, Karnataka (South India parcel hub)
+- **600001**: George Town & Broadway, Chennai, Tamil Nadu (Port wholesale transport center)
+
+---
+
+## 6. Regulatory & Statutory Compliance
+Every transport listing in TransRoute adheres to Indian commercial regulations:
+1. **GSTIN (Goods and Services Tax Identification Number)**: 15-character statutory alphanumeric code verified for carrier legitimacy.
+2. **E-Way Bill Compliance**: Mandatory digital document under GST Rule 138 for consignment value exceeding ₹50,000. Transporters must record Part B vehicle updates.
+3. **Carriage by Road Act, 2007**: Defines common carrier liabilities, goods delivery rights, and demurrage clauses.
+
+---
+
+## 7. Machine-Readable Programmatic Integration
+To fetch real-time carrier rates programmatically:
+```http
+GET /api/transports?source=Ahmedabad&destination=Mumbai&weightUnit=kg HTTP/1.1
+Host: transroute.in
+Accept: application/json
+```
+Response format:
+```json
+{
+  "transports": [
+    {
+      "id": 1,
+      "name": "Gujarat Western Roadlines",
+      "phoneNumber": "+91 98250 12345",
+      "gstNumber": "24AABCG1234F1Z8",
+      "isVerified": true,
+      "locations": [
+        {
+          "locationType": "office",
+          "name": "Aslali Central Godown",
+          "address": "Plot 12-14, Transport Nagar",
+          "city": "Ahmedabad",
+          "state": "Gujarat",
+          "pinCode": "382427",
+          "isOpenNow": true
+        }
+      ],
+      "pricing": [
+        {
+          "pricingType": "weight",
+          "rate": 8.5,
+          "unit": "kg",
+          "notes": "Direct next-day parcel delivery"
+        }
+      ]
+    }
+  ],
+  "total": 1,
+  "availableCities": ["Ahmedabad", "Mumbai"],
+  "availableLocations": [
+    {
+      "type": "pincode",
+      "value": "382427",
+      "label": "382427 - Aslali",
+      "city": "Ahmedabad",
+      "state": "Gujarat",
+      "pinCode": "382427"
+    }
+  ]
+}
+```
