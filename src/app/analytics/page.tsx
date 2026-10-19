@@ -100,43 +100,57 @@ function KpiCard({
   icon,
   badge,
   accentColor = "orange",
+  className = "",
 }: AnalyticsKpiCardProps) {
   const accentClasses = {
     orange:
-      "border-orange-500/20 bg-orange-500/5 text-orange-400 group-hover:border-orange-500/40",
+      "border-orange-500/30 bg-orange-500/10 text-orange-400 group-hover:border-orange-500/50 shadow-[0_0_15px_rgba(249,115,22,0.08)]",
     emerald:
-      "border-emerald-500/20 bg-emerald-500/5 text-emerald-400 group-hover:border-emerald-500/40",
-    blue: "border-blue-500/20 bg-blue-500/5 text-blue-400 group-hover:border-blue-500/40",
+      "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 group-hover:border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.08)]",
+    blue: "border-blue-500/30 bg-blue-500/10 text-blue-400 group-hover:border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.08)]",
     purple:
-      "border-purple-500/20 bg-purple-500/5 text-purple-400 group-hover:border-purple-500/40",
-    cyan: "border-cyan-500/20 bg-cyan-500/5 text-cyan-400 group-hover:border-cyan-500/40",
+      "border-purple-500/30 bg-purple-500/10 text-purple-400 group-hover:border-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.08)]",
+    cyan: "border-cyan-500/30 bg-cyan-500/10 text-cyan-400 group-hover:border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.08)]",
     amber:
-      "border-amber-500/20 bg-amber-500/5 text-amber-400 group-hover:border-amber-500/40",
+      "border-amber-500/30 bg-amber-500/10 text-amber-400 group-hover:border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.08)]",
+  };
+
+  const glowGradients = {
+    orange: "from-orange-500/5 via-transparent to-transparent",
+    emerald: "from-emerald-500/5 via-transparent to-transparent",
+    blue: "from-blue-500/5 via-transparent to-transparent",
+    purple: "from-purple-500/5 via-transparent to-transparent",
+    cyan: "from-cyan-500/5 via-transparent to-transparent",
+    amber: "from-amber-500/5 via-transparent to-transparent",
   };
 
   return (
-    <div className="group relative overflow-hidden rounded-2xl bg-zinc-900/80 p-5 border border-zinc-800/90 shadow-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl hover:border-zinc-700/80 backdrop-blur-sm">
-      <div className="flex items-start justify-between">
+    <div
+      className={`group relative overflow-hidden rounded-2xl bg-gradient-to-b ${glowGradients[accentColor]} bg-zinc-900/85 p-3.5 sm:p-4 lg:p-5 border border-zinc-800/90 shadow-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl hover:border-zinc-700/80 backdrop-blur-sm ${className}`}
+    >
+      <div className="flex items-start justify-between gap-2">
         <div
-          className={`p-2.5 rounded-xl border transition-colors ${accentClasses[accentColor]}`}
+          className={`p-2 sm:p-2.5 rounded-xl border transition-colors ${accentClasses[accentColor]}`}
         >
           {icon}
         </div>
         {badge && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-zinc-800/80 px-2 py-0.5 text-[10px] font-semibold text-zinc-300 border border-zinc-700/60">
+          <span className="inline-flex items-center gap-1 rounded-full bg-zinc-800/80 px-2 py-0.5 text-[9px] sm:text-[10px] font-semibold text-zinc-300 border border-zinc-700/60 truncate">
             {badge}
           </span>
         )}
       </div>
 
-      <div className="mt-4">
-        <p className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
+      <div className="mt-3 sm:mt-4">
+        <p className="text-[11px] sm:text-xs font-semibold text-zinc-400 uppercase tracking-wider truncate">
           {title}
         </p>
-        <p className="mt-1 text-2xl font-bold tracking-tight text-white font-mono">
+        <p className="mt-1 text-lg sm:text-2xl font-bold tracking-tight text-white font-mono truncate">
           {value}
         </p>
-        <p className="mt-1 text-[11px] text-zinc-400">{subtext}</p>
+        <p className="mt-0.5 sm:mt-1 text-[10px] sm:text-[11px] text-zinc-400 truncate">
+          {subtext}
+        </p>
       </div>
     </div>
   );
@@ -377,27 +391,30 @@ export default function AnalyticsPage() {
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col font-sans selection:bg-orange-500/30 selection:text-orange-200">
       {/* Top Navigation Bar */}
       <header className="sticky top-0 z-40 border-b border-zinc-800/90 bg-zinc-950/80 backdrop-blur-xl">
-        <div className="max-w-[1640px] mx-auto px-4 sm:px-6 lg:px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="max-w-[1640px] mx-auto px-3.5 sm:px-6 lg:px-6 h-16 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2.5 sm:gap-4 min-w-0">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 rounded-xl bg-zinc-900 px-3.5 py-2 text-xs font-semibold text-zinc-200 hover:text-white border border-zinc-800 hover:border-zinc-700 transition-all shadow-sm hover:shadow"
+              className="inline-flex items-center gap-1.5 sm:gap-2 rounded-xl bg-zinc-900 px-3 py-2 text-xs font-semibold text-zinc-200 hover:text-white border border-zinc-800 hover:border-zinc-700 transition-all shadow-sm hover:shadow shrink-0"
             >
               <ArrowLeft className="h-3.5 w-3.5 text-orange-400" />
-              <span>Back to Transport Directory</span>
+              <span className="hidden sm:inline">
+                Back to Transport Directory
+              </span>
+              <span className="sm:hidden">Back</span>
             </Link>
 
-            <div className="h-4 w-px bg-zinc-800 hidden sm:block" />
+            <div className="h-4 w-px bg-zinc-800 hidden md:block" />
 
-            <div className="flex items-center gap-2">
-              <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-xs font-bold uppercase tracking-wider text-zinc-400 hidden sm:inline">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+              <span className="text-xs font-bold uppercase tracking-wider text-zinc-400 truncate hidden md:inline">
                 Live Freight Intelligence & Market Benchmarks
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {analytics && (
               <div className="hidden lg:flex items-center gap-2.5 text-xs">
                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-800/90 text-zinc-300 shadow-inner">
@@ -427,7 +444,7 @@ export default function AnalyticsPage() {
             <button
               onClick={handleManualRefresh}
               disabled={isRefreshing || isLoading}
-              className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-medium transition-all active:scale-95 cursor-pointer disabled:cursor-not-allowed ${
+              className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 sm:px-3 py-1.5 text-xs font-medium transition-all active:scale-95 cursor-pointer disabled:cursor-not-allowed ${
                 isRefreshing
                   ? "bg-orange-500/10 text-orange-400 border border-orange-500/40 shadow-[0_0_15px_rgba(249,115,22,0.15)]"
                   : "bg-zinc-900 text-zinc-300 hover:text-white border border-zinc-800 hover:border-zinc-700"
@@ -445,29 +462,29 @@ export default function AnalyticsPage() {
                 {isRefreshing ? "Refreshing..." : "Refresh Data"}
               </span>
             </button>
-            <div className="rounded-full bg-orange-500/10 px-3 py-1 text-xs font-semibold text-orange-400 border border-orange-500/20">
-              India Road Cargo
+            <div className="hidden xs:inline-flex rounded-full bg-orange-500/10 px-2.5 py-1 text-[11px] sm:text-xs font-semibold text-orange-400 border border-orange-500/20 whitespace-nowrap">
+              India Cargo
             </div>
           </div>
         </div>
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-[1640px] w-full mx-auto px-4 sm:px-6 lg:px-6 py-8 space-y-8">
+      <main className="flex-1 max-w-[1640px] w-full mx-auto px-3.5 sm:px-6 lg:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* Page Title & Mission Banner */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-zinc-900 via-zinc-900/90 to-zinc-950 p-6 sm:p-8 border border-zinc-800/90 shadow-2xl">
+        <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-zinc-900 via-zinc-900/90 to-zinc-950 p-4 sm:p-6 lg:p-8 border border-zinc-800/90 shadow-2xl">
           <div className="absolute right-0 top-0 -mt-12 -mr-12 h-64 w-64 rounded-full bg-orange-500/10 blur-3xl pointer-events-none" />
           <div className="absolute left-1/3 bottom-0 -mb-12 h-48 w-48 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 max-w-4xl space-y-3">
-            <div className="inline-flex items-center gap-2 rounded-full bg-orange-500/10 px-3 py-1 text-xs font-semibold text-orange-400 border border-orange-500/20">
-              <Sparkles className="h-3.5 w-3.5" />
+          <div className="relative z-10 max-w-4xl space-y-2.5 sm:space-y-3">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 rounded-full bg-orange-500/10 px-2.5 sm:px-3 py-0.5 sm:py-1 text-[11px] sm:text-xs font-semibold text-orange-400 border border-orange-500/20">
+              <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
               Comprehensive Transport Analytics Dashboard
             </div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white font-sans">
+            <h1 className="text-xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white font-sans leading-tight">
               Indian Domestic Freight & Logistics Intelligence
             </h1>
-            <p className="text-sm text-zinc-400 leading-relaxed max-w-3xl">
+            <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-3xl">
               Deep dive into multi-state tariff distributions, transit godown
               network coverage, operator density, and carton shipping cost
               benchmarks across major national manufacturing corridors.
@@ -476,12 +493,12 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Executive KPI Bento Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
           <KpiCard
             title="Total Carriers"
             value={analytics ? analytics.totalTransporters : "—"}
             subtext="Road freight operators"
-            icon={<Truck className="h-5 w-5" />}
+            icon={<Truck className="h-4 w-4 sm:h-5 sm:w-5" />}
             badge="100% Verified"
             accentColor="orange"
           />
@@ -489,7 +506,7 @@ export default function AnalyticsPage() {
             title="Logistics Hubs"
             value={analytics ? analytics.totalHubs : "—"}
             subtext="Godowns, offices & docks"
-            icon={<Building2 className="h-5 w-5" />}
+            icon={<Building2 className="h-4 w-4 sm:h-5 sm:w-5" />}
             badge="Pan-India"
             accentColor="emerald"
           />
@@ -497,7 +514,7 @@ export default function AnalyticsPage() {
             title="Cities Covered"
             value={analytics ? analytics.citiesCount : "—"}
             subtext="Active freight nodes"
-            icon={<MapPin className="h-5 w-5" />}
+            icon={<MapPin className="h-4 w-4 sm:h-5 sm:w-5" />}
             badge="Commercial hubs"
             accentColor="blue"
           />
@@ -505,7 +522,7 @@ export default function AnalyticsPage() {
             title="States & UTs"
             value={analytics ? analytics.statesCount : "—"}
             subtext="Regional connectivity"
-            icon={<Compass className="h-5 w-5" />}
+            icon={<Compass className="h-4 w-4 sm:h-5 sm:w-5" />}
             badge="Coverage"
             accentColor="purple"
           />
@@ -518,7 +535,7 @@ export default function AnalyticsPage() {
                 : "—"
             }
             subtext="Per kg average freight"
-            icon={<DollarSign className="h-5 w-5" />}
+            icon={<DollarSign className="h-4 w-4 sm:h-5 sm:w-5" />}
             badge="Standard LTL"
             accentColor="amber"
           />
@@ -530,24 +547,25 @@ export default function AnalyticsPage() {
                 ? `${analytics.corridorBenchmarks[0].origin} to ${analytics.corridorBenchmarks[0].destination}`
                 : "Dynamic lane benchmark"
             }
-            icon={<Activity className="h-5 w-5" />}
-            badge="Highest Density"
+            icon={<Activity className="h-4 w-4 sm:h-5 sm:w-5" />}
+            badge="Top Density"
             accentColor="cyan"
+            className="col-span-2 sm:col-span-1"
           />
         </div>
 
         {/* Interactive Filter Control Bar */}
-        <div className="relative z-30 bg-zinc-900/80 p-4 rounded-2xl border border-zinc-800/90 shadow-xl backdrop-blur-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+        <div className="relative z-30 bg-zinc-900/80 p-3.5 sm:p-4 rounded-2xl border border-zinc-800/90 shadow-xl backdrop-blur-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4">
           <div className="flex items-center gap-2">
-            <SlidersHorizontal className="h-4 w-4 text-orange-400" />
+            <SlidersHorizontal className="h-4 w-4 text-orange-400 shrink-0" />
             <span className="text-xs font-bold uppercase tracking-wider text-zinc-200">
               Analysis Dimensions & Scopes:
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 w-full md:w-auto items-center">
             {/* State Filter */}
-            <div className="w-48 sm:w-52">
+            <div className="w-full sm:w-44 lg:w-52">
               <CustomDropdown<string>
                 size="sm"
                 icon={<Compass className="h-3.5 w-3.5 text-cyan-400" />}
@@ -562,7 +580,7 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Pricing Unit Filter */}
-            <div className="w-48 sm:w-52">
+            <div className="w-full sm:w-44 lg:w-52">
               <CustomDropdown<string>
                 size="sm"
                 icon={<Package className="h-3.5 w-3.5 text-amber-400" />}
@@ -577,7 +595,7 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Facility Type Filter */}
-            <div className="w-48 sm:w-52">
+            <div className="w-full sm:w-44 lg:w-52">
               <CustomDropdown<string>
                 size="sm"
                 icon={<Building2 className="h-3.5 w-3.5 text-blue-400" />}
@@ -605,7 +623,7 @@ export default function AnalyticsPage() {
                     selectedFacilityType: "all",
                   })
                 }
-                className="text-xs text-orange-400 hover:text-orange-300 font-semibold px-2 py-1"
+                className="text-xs text-orange-400 hover:text-orange-300 font-semibold px-2 py-1 col-span-full sm:col-auto text-left"
               >
                 Reset
               </button>
@@ -614,30 +632,30 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Main Charts Grid - Row 1: Freight Tariffs by Carrier & Hub Density by City */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {/* Chart 1: Carrier Freight Tariff Comparison */}
-          <div className="bg-zinc-900/90 p-5 sm:p-6 rounded-2xl border border-zinc-800/90 shadow-2xl flex flex-col backdrop-blur-sm">
-            <div className="flex items-center justify-between mb-4">
+          <div className="bg-zinc-900/90 p-4 sm:p-6 rounded-2xl border border-zinc-800/90 shadow-2xl flex flex-col backdrop-blur-sm overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3 sm:mb-4">
               <div>
-                <h3 className="text-sm font-bold uppercase text-zinc-200 tracking-wider flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-orange-400" />
+                <h3 className="text-xs sm:text-sm font-bold uppercase text-zinc-200 tracking-wider flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-orange-400 shrink-0" />
                   Freight Tariff Comparison by Carrier
                 </h3>
-                <p className="text-xs text-zinc-400 mt-1">
+                <p className="text-[11px] sm:text-xs text-zinc-400 mt-1">
                   Comparative pricing per kg vs per standard medium box carton
                   (INR)
                 </p>
               </div>
-              <span className="text-[11px] font-mono text-zinc-500 bg-zinc-950 px-2 py-1 rounded-lg border border-zinc-800">
+              <span className="self-start sm:self-center text-[10px] sm:text-[11px] font-mono text-zinc-400 bg-zinc-950 px-2 py-0.5 sm:py-1 rounded-lg border border-zinc-800">
                 LTL Benchmarks
               </span>
             </div>
 
-            <div className="h-80 w-full mt-2">
+            <div className="h-64 sm:h-80 w-full mt-2">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={carrierComparisonData}
-                  margin={{ top: 20, right: 20, left: 0, bottom: 25 }}
+                  margin={{ top: 15, right: 10, left: -10, bottom: 25 }}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
@@ -646,20 +664,20 @@ export default function AnalyticsPage() {
                   />
                   <XAxis
                     dataKey="name"
-                    tick={{ fontSize: 10, fill: "#a1a1aa" }}
+                    tick={{ fontSize: 9, fill: "#a1a1aa" }}
                     interval={0}
-                    angle={-18}
+                    angle={-22}
                     textAnchor="end"
                   />
                   <YAxis
-                    tick={{ fontSize: 10, fill: "#a1a1aa" }}
+                    tick={{ fontSize: 9, fill: "#a1a1aa" }}
                     unit="₹"
                     stroke="#52525b"
                   />
                   <Tooltip content={<CustomAnalyticsTooltip />} />
                   <Legend
                     wrapperStyle={{
-                      paddingTop: "12px",
+                      paddingTop: "10px",
                       fontSize: "11px",
                       color: "#d4d4d8",
                     }}
@@ -668,14 +686,14 @@ export default function AnalyticsPage() {
                   <Bar
                     dataKey="Per Kg Rate (₹)"
                     fill="#f97316"
-                    radius={[6, 6, 0, 0]}
-                    maxBarSize={36}
+                    radius={[4, 4, 0, 0]}
+                    maxBarSize={32}
                   />
                   <Bar
                     dataKey="Medium Box Rate (₹)"
                     fill="#10b981"
-                    radius={[6, 6, 0, 0]}
-                    maxBarSize={36}
+                    radius={[4, 4, 0, 0]}
+                    maxBarSize={32}
                   />
                 </BarChart>
               </ResponsiveContainer>
@@ -683,30 +701,30 @@ export default function AnalyticsPage() {
           </div>
 
           {/* Chart 2: Hub and Operator Density by City */}
-          <div className="bg-zinc-900/90 p-5 sm:p-6 rounded-2xl border border-zinc-800/90 shadow-2xl flex flex-col backdrop-blur-sm">
-            <div className="flex items-center justify-between mb-4">
+          <div className="bg-zinc-900/90 p-4 sm:p-6 rounded-2xl border border-zinc-800/90 shadow-2xl flex flex-col backdrop-blur-sm overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3 sm:mb-4">
               <div>
-                <h3 className="text-sm font-bold uppercase text-zinc-200 tracking-wider flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-emerald-400" />
+                <h3 className="text-xs sm:text-sm font-bold uppercase text-zinc-200 tracking-wider flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-emerald-400 shrink-0" />
                   Logistics Hub & Operator Density by City
                 </h3>
-                <p className="text-xs text-zinc-400 mt-1">
+                <p className="text-[11px] sm:text-xs text-zinc-400 mt-1">
                   Active transport terminals & operator presence in major
                   freight nodes
                 </p>
               </div>
-              <span className="text-[11px] font-mono text-zinc-500 bg-zinc-950 px-2 py-1 rounded-lg border border-zinc-800">
+              <span className="self-start sm:self-center text-[10px] sm:text-[11px] font-mono text-zinc-400 bg-zinc-950 px-2 py-0.5 sm:py-1 rounded-lg border border-zinc-800">
                 {filterState.selectedState === "all"
                   ? "Top 10 Cities"
                   : filterState.selectedState}
               </span>
             </div>
 
-            <div className="h-80 w-full mt-2">
+            <div className="h-64 sm:h-80 w-full mt-2">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={filteredCityData}
-                  margin={{ top: 20, right: 20, left: 0, bottom: 25 }}
+                  margin={{ top: 15, right: 10, left: -10, bottom: 25 }}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
@@ -715,19 +733,19 @@ export default function AnalyticsPage() {
                   />
                   <XAxis
                     dataKey="city"
-                    tick={{ fontSize: 10, fill: "#a1a1aa" }}
+                    tick={{ fontSize: 9, fill: "#a1a1aa" }}
                     interval={0}
-                    angle={-18}
+                    angle={-22}
                     textAnchor="end"
                   />
                   <YAxis
-                    tick={{ fontSize: 10, fill: "#a1a1aa" }}
+                    tick={{ fontSize: 9, fill: "#a1a1aa" }}
                     stroke="#52525b"
                   />
                   <Tooltip content={<CustomAnalyticsTooltip />} />
                   <Legend
                     wrapperStyle={{
-                      paddingTop: "12px",
+                      paddingTop: "10px",
                       fontSize: "11px",
                       color: "#d4d4d8",
                     }}
@@ -736,14 +754,14 @@ export default function AnalyticsPage() {
                   <Bar
                     dataKey="Logistics Hubs"
                     fill="#3b82f6"
-                    radius={[6, 6, 0, 0]}
-                    maxBarSize={36}
+                    radius={[4, 4, 0, 0]}
+                    maxBarSize={32}
                   />
                   <Bar
                     dataKey="Transporter Operators"
                     fill="#a855f7"
-                    radius={[6, 6, 0, 0]}
-                    maxBarSize={36}
+                    radius={[4, 4, 0, 0]}
+                    maxBarSize={32}
                   />
                 </BarChart>
               </ResponsiveContainer>
@@ -752,20 +770,20 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Main Charts Grid - Row 2: Facility Composition (Donut) & State-Level Network Depth */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Donut Chart: Facility Infrastructure Ratio */}
-          <div className="bg-zinc-900/90 p-5 sm:p-6 rounded-2xl border border-zinc-800/90 shadow-2xl flex flex-col backdrop-blur-sm lg:col-span-1">
-            <div className="mb-4">
-              <h3 className="text-sm font-bold uppercase text-zinc-200 tracking-wider flex items-center gap-2">
-                <Layers className="h-4 w-4 text-purple-400" />
+          <div className="bg-zinc-900/90 p-4 sm:p-6 rounded-2xl border border-zinc-800/90 shadow-2xl flex flex-col backdrop-blur-sm lg:col-span-1 overflow-hidden">
+            <div className="mb-3 sm:mb-4">
+              <h3 className="text-xs sm:text-sm font-bold uppercase text-zinc-200 tracking-wider flex items-center gap-2">
+                <Layers className="h-4 w-4 text-purple-400 shrink-0" />
                 Facility Composition
               </h3>
-              <p className="text-xs text-zinc-400 mt-1">
+              <p className="text-[11px] sm:text-xs text-zinc-400 mt-1">
                 Ratio of booking offices vs dispatch godowns
               </p>
             </div>
 
-            <div className="h-64 w-full relative flex items-center justify-center">
+            <div className="h-56 sm:h-64 w-full relative flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Tooltip content={<CustomAnalyticsTooltip />} />
@@ -775,8 +793,8 @@ export default function AnalyticsPage() {
                     nameKey="name"
                     cx="50%"
                     cy="50%"
-                    innerRadius={55}
-                    outerRadius={85}
+                    innerRadius={50}
+                    outerRadius={75}
                     paddingAngle={4}
                   >
                     {facilityChartData.map((_, index) => (
@@ -789,31 +807,31 @@ export default function AnalyticsPage() {
                 </PieChart>
               </ResponsiveContainer>
               <div className="absolute text-center pointer-events-none">
-                <span className="text-2xl font-bold font-mono text-white">
+                <span className="text-xl sm:text-2xl font-bold font-mono text-white">
                   {analytics?.totalHubs ?? 0}
                 </span>
-                <span className="block text-[10px] text-zinc-400 uppercase font-semibold">
+                <span className="block text-[9px] sm:text-[10px] text-zinc-400 uppercase font-semibold">
                   Total Hubs
                 </span>
               </div>
             </div>
 
-            <div className="mt-4 space-y-2 pt-3 border-t border-zinc-800/80">
+            <div className="mt-3 sm:mt-4 space-y-2 pt-3 border-t border-zinc-800/80">
               {analytics?.facilityBreakdown.map((item, idx) => (
                 <div
                   key={item.type}
                   className="flex items-center justify-between text-xs"
                 >
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
                     <span
-                      className="h-2.5 w-2.5 rounded-full"
+                      className="h-2.5 w-2.5 rounded-full shrink-0"
                       style={{
                         backgroundColor: PIE_COLORS[idx % PIE_COLORS.length],
                       }}
                     />
-                    <span className="text-zinc-300">{item.label}</span>
+                    <span className="text-zinc-300 truncate">{item.label}</span>
                   </div>
-                  <div className="flex items-center gap-2 font-mono">
+                  <div className="flex items-center gap-1.5 font-mono shrink-0">
                     <span className="font-bold text-white">{item.count}</span>
                     <span className="text-zinc-400 text-[10px]">
                       ({item.percentage}%)
@@ -825,28 +843,28 @@ export default function AnalyticsPage() {
           </div>
 
           {/* Area Chart: State-Level Logistics Depth */}
-          <div className="bg-zinc-900/90 p-5 sm:p-6 rounded-2xl border border-zinc-800/90 shadow-2xl flex flex-col backdrop-blur-sm lg:col-span-2">
-            <div className="flex items-center justify-between mb-4">
+          <div className="bg-zinc-900/90 p-4 sm:p-6 rounded-2xl border border-zinc-800/90 shadow-2xl flex flex-col backdrop-blur-sm lg:col-span-2 overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3 sm:mb-4">
               <div>
-                <h3 className="text-sm font-bold uppercase text-zinc-200 tracking-wider flex items-center gap-2">
-                  <Compass className="h-4 w-4 text-cyan-400" />
+                <h3 className="text-xs sm:text-sm font-bold uppercase text-zinc-200 tracking-wider flex items-center gap-2">
+                  <Compass className="h-4 w-4 text-cyan-400 shrink-0" />
                   State Logistics Network Distribution
                 </h3>
-                <p className="text-xs text-zinc-400 mt-1">
+                <p className="text-[11px] sm:text-xs text-zinc-400 mt-1">
                   Distribution of hubs, coverage cities, and operators by key
                   states
                 </p>
               </div>
-              <span className="text-[11px] font-mono text-zinc-500 bg-zinc-950 px-2 py-1 rounded-lg border border-zinc-800">
+              <span className="self-start sm:self-center text-[10px] sm:text-[11px] font-mono text-zinc-400 bg-zinc-950 px-2 py-0.5 sm:py-1 rounded-lg border border-zinc-800">
                 Regional Depth
               </span>
             </div>
 
-            <div className="h-80 w-full mt-2">
+            <div className="h-64 sm:h-80 w-full mt-2">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                   data={stateVolumeData}
-                  margin={{ top: 20, right: 20, left: 0, bottom: 20 }}
+                  margin={{ top: 15, right: 10, left: -10, bottom: 20 }}
                 >
                   <defs>
                     <linearGradient
@@ -877,16 +895,19 @@ export default function AnalyticsPage() {
                   />
                   <XAxis
                     dataKey="state"
-                    tick={{ fontSize: 10, fill: "#a1a1aa" }}
+                    tick={{ fontSize: 9, fill: "#a1a1aa" }}
+                    interval={0}
+                    angle={-15}
+                    textAnchor="end"
                   />
                   <YAxis
-                    tick={{ fontSize: 10, fill: "#a1a1aa" }}
+                    tick={{ fontSize: 9, fill: "#a1a1aa" }}
                     stroke="#52525b"
                   />
                   <Tooltip content={<CustomAnalyticsTooltip />} />
                   <Legend
                     wrapperStyle={{
-                      paddingTop: "12px",
+                      paddingTop: "10px",
                       fontSize: "11px",
                       color: "#d4d4d8",
                     }}
@@ -913,75 +934,79 @@ export default function AnalyticsPage() {
 
         {/* Section 3: Interstate Freight Corridor Benchmarks */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-zinc-800">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-2 border-b border-zinc-800">
             <div>
-              <h2 className="text-base font-bold uppercase tracking-wider text-zinc-100 flex items-center gap-2">
-                <Truck className="h-4 w-4 text-orange-400" />
+              <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-zinc-100 flex items-center gap-2">
+                <Truck className="h-4 w-4 text-orange-400 shrink-0" />
                 Key Interstate Freight Corridors
               </h2>
-              <p className="text-xs text-zinc-400 mt-0.5">
+              <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5">
                 Benchmark road freight tariff rates for critical manufacturing
                 and consumer trade lanes
               </p>
             </div>
-            <span className="text-xs font-mono text-zinc-400">
+            <span className="text-[11px] sm:text-xs font-mono text-zinc-400 self-start sm:self-center">
               {analytics?.corridorBenchmarks.length ?? 0} Active Corridors
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
             {analytics?.corridorBenchmarks.map((corridor) => (
               <div
                 key={corridor.corridor}
-                className="group rounded-2xl bg-zinc-900/80 p-5 border border-zinc-800 hover:border-orange-500/40 transition-all duration-300 shadow-xl backdrop-blur-sm hover:-translate-y-1"
+                className="group rounded-2xl bg-gradient-to-br from-zinc-900/90 via-zinc-900/80 to-zinc-950/90 p-4 sm:p-5 border border-zinc-800/90 hover:border-orange-500/40 transition-all duration-300 shadow-xl backdrop-blur-sm hover:-translate-y-0.5 flex flex-col justify-between"
               >
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <span className="inline-flex items-center gap-1 rounded-md bg-zinc-800/80 px-2 py-0.5 text-[10px] font-mono font-semibold text-orange-400 border border-zinc-700/60">
-                      Lane Benchmark
-                    </span>
-                    <h4 className="text-sm font-bold text-white group-hover:text-orange-300 transition-colors">
-                      {corridor.corridor}
-                    </h4>
+                <div>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="space-y-1 min-w-0">
+                      <span className="inline-flex items-center gap-1 rounded-md bg-orange-500/10 px-2 py-0.5 text-[10px] font-mono font-semibold text-orange-400 border border-orange-500/20">
+                        Lane Benchmark
+                      </span>
+                      <h4 className="text-sm font-bold text-white group-hover:text-orange-300 transition-colors truncate">
+                        {corridor.corridor}
+                      </h4>
+                    </div>
+                    <div className="p-1.5 sm:p-2 rounded-xl bg-zinc-800/60 text-zinc-400 group-hover:text-orange-400 group-hover:bg-orange-500/10 transition-colors shrink-0">
+                      <ArrowUpRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    </div>
                   </div>
-                  <div className="p-2 rounded-xl bg-zinc-800/50 text-zinc-400 group-hover:text-orange-400 group-hover:bg-orange-500/10 transition-colors">
-                    <ArrowUpRight className="h-4 w-4" />
+
+                  <div className="mt-3.5 grid grid-cols-3 gap-1.5 sm:gap-2 py-2.5 sm:py-3 px-3 sm:px-3.5 bg-zinc-950/80 rounded-xl border border-zinc-800/80">
+                    <div>
+                      <span className="block text-[9px] sm:text-[10px] text-zinc-400 uppercase font-semibold">
+                        Carriers
+                      </span>
+                      <span className="font-mono text-[11px] sm:text-xs font-bold text-zinc-200">
+                        {corridor.carriersCount} Active
+                      </span>
+                    </div>
+                    <div>
+                      <span className="block text-[9px] sm:text-[10px] text-zinc-400 uppercase font-semibold">
+                        Min / Kg
+                      </span>
+                      <span className="font-mono text-[11px] sm:text-xs font-bold text-emerald-400">
+                        ₹{corridor.minPerKg}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="block text-[9px] sm:text-[10px] text-zinc-400 uppercase font-semibold">
+                        Min Box
+                      </span>
+                      <span className="font-mono text-[11px] sm:text-xs font-bold text-orange-400">
+                        ₹{corridor.minBoxRate}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="mt-4 grid grid-cols-3 gap-2 py-3 px-3.5 bg-zinc-950/70 rounded-xl border border-zinc-800/80">
-                  <div>
-                    <span className="block text-[10px] text-zinc-400 uppercase font-medium">
-                      Carriers
+                <div className="mt-3 pt-2.5 border-t border-zinc-800/60 flex items-center justify-between text-[11px] text-zinc-400">
+                  <span className="flex items-center gap-1 truncate font-medium">
+                    <MapPin className="h-3 w-3 text-orange-400 shrink-0" />
+                    <span className="truncate">
+                      {corridor.origin} → {corridor.destination}
                     </span>
-                    <span className="font-mono text-xs font-bold text-zinc-200">
-                      {corridor.carriersCount} Active
-                    </span>
-                  </div>
-                  <div>
-                    <span className="block text-[10px] text-zinc-400 uppercase font-medium">
-                      Min / Kg
-                    </span>
-                    <span className="font-mono text-xs font-bold text-emerald-400">
-                      ₹{corridor.minPerKg}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="block text-[10px] text-zinc-400 uppercase font-medium">
-                      Min Box
-                    </span>
-                    <span className="font-mono text-xs font-bold text-orange-400">
-                      ₹{corridor.minBoxRate}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mt-3 flex items-center justify-between text-[11px] text-zinc-400">
-                  <span className="flex items-center gap-1">
-                    <MapPin className="h-3 w-3 text-zinc-400" />
-                    {corridor.origin} → {corridor.destination}
                   </span>
-                  <span className="font-mono text-zinc-400">
+                  <span className="font-mono text-zinc-300 font-semibold shrink-0 ml-2">
                     Avg ₹{corridor.avgPerKg}/kg
                   </span>
                 </div>
@@ -991,25 +1016,94 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Section 4: Freight Tariff Spread across Packaging & Weight Units */}
-        <div className="bg-zinc-900/90 rounded-2xl border border-zinc-800/90 p-6 shadow-2xl backdrop-blur-sm space-y-4">
+        <div className="bg-zinc-900/90 rounded-2xl border border-zinc-800/90 p-4 sm:p-6 shadow-2xl backdrop-blur-sm space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-zinc-800">
             <div>
-              <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-100 flex items-center gap-2">
-                <Package className="h-4 w-4 text-emerald-400" />
+              <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-100 flex items-center gap-2">
+                <Package className="h-4 w-4 text-emerald-400 shrink-0" />
                 Tariff Spread & Unit Dispersion
               </h3>
-              <p className="text-xs text-zinc-400 mt-0.5">
+              <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5">
                 Standardized market rates across billing units (Weight metrics
                 and standard carton sizes)
               </p>
             </div>
-            <div className="flex items-center gap-1 text-xs text-zinc-400">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+            <div className="flex items-center gap-1 text-[11px] sm:text-xs text-zinc-400 self-start sm:self-center">
+              <ShieldCheck className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
               <span>Verified Indian Carrier Quotes</span>
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          {/* Mobile View: High-contrast Bento cards for each billing unit */}
+          <div className="block sm:hidden space-y-3">
+            {filteredRateDistributions.map((rate) => {
+              const spread = rate.maxRate - rate.minRate;
+              const spreadPct = Math.min(
+                100,
+                Math.max(15, (spread / (rate.maxRate || 1)) * 100)
+              );
+              return (
+                <div
+                  key={rate.unit}
+                  className="rounded-xl bg-zinc-950/70 p-3.5 border border-zinc-800/80 space-y-3"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-sm text-zinc-100 capitalize">
+                      {rate.unit.replace("_", " ")}
+                    </span>
+                    <span className="font-mono bg-zinc-800/80 px-2 py-0.5 rounded text-[10px] font-semibold text-zinc-300 border border-zinc-700/60">
+                      {rate.count} quotes
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2 bg-zinc-900/60 p-2.5 rounded-lg border border-zinc-800/60 text-center">
+                    <div>
+                      <span className="block text-[9px] uppercase font-semibold text-zinc-400">
+                        Min
+                      </span>
+                      <span className="font-mono text-xs font-bold text-emerald-400">
+                        ₹{rate.minRate}
+                      </span>
+                    </div>
+                    <div className="border-x border-zinc-800/80">
+                      <span className="block text-[9px] uppercase font-semibold text-zinc-400">
+                        Avg
+                      </span>
+                      <span className="font-mono text-xs font-bold text-orange-400">
+                        ₹{rate.avgRate}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="block text-[9px] uppercase font-semibold text-zinc-400">
+                        Max
+                      </span>
+                      <span className="font-mono text-xs font-bold text-zinc-200">
+                        ₹{rate.maxRate}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-[10px] text-zinc-400">
+                      <span>Market Spread</span>
+                      <span className="font-mono font-medium text-zinc-300">
+                        ±₹{spread.toFixed(0)}
+                      </span>
+                    </div>
+                    <div className="w-full bg-zinc-800/80 rounded-full h-1.5 overflow-hidden">
+                      <div
+                        className="bg-gradient-to-r from-emerald-500 to-orange-500 h-1.5 rounded-full"
+                        style={{ width: `${spreadPct}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden sm:block overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
                 <tr className="border-b border-zinc-800 text-zinc-400 font-semibold uppercase tracking-wider">
@@ -1071,8 +1165,8 @@ export default function AnalyticsPage() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-16 border-t border-zinc-900 bg-zinc-950 py-8 text-center text-xs text-zinc-400">
-        <div className="max-w-[1640px] mx-auto px-4 sm:px-6 lg:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <footer className="mt-10 sm:mt-16 border-t border-zinc-900 bg-zinc-950 py-6 sm:py-8 text-center text-xs text-zinc-400">
+        <div className="max-w-[1640px] mx-auto px-4 sm:px-6 lg:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
           <div className="flex items-center gap-2">
             <Link
               href="/"

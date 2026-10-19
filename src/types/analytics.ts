@@ -71,4 +71,5 @@ export interface AnalyticsKpiCardProps {
   badge?: string;
   trend?: string;
   accentColor?: "orange" | "emerald" | "blue" | "purple" | "cyan" | "amber";
+  className?: string;
 }

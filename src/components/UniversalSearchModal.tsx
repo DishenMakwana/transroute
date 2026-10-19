@@ -108,16 +108,16 @@ export default function UniversalSearchModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center p-3 sm:p-6 sm:pt-16 bg-black/80 backdrop-blur-sm animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-start justify-center p-0 sm:p-6 sm:pt-14 bg-black/85 backdrop-blur-md animate-in fade-in duration-150">
       <div
-        className="relative w-full max-w-3xl bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[88vh]"
+        className="relative w-full h-[100dvh] sm:h-auto sm:max-h-[88vh] sm:max-w-3xl bg-zinc-950 sm:bg-zinc-900 border-0 sm:border border-zinc-800 rounded-none sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Header Bar */}
-        <div className="p-4 sm:p-5 border-b border-zinc-800 bg-zinc-950/80">
-          <div className="flex items-center gap-3">
+        <div className="p-3.5 sm:p-5 border-b border-zinc-800 bg-zinc-950 shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3">
             <div className="p-2 rounded-xl bg-orange-950/50 border border-orange-500/30 text-orange-400 shrink-0">
-              <Search className="h-5 w-5" />
+              <Search className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
             </div>
 
             <div className="flex-1 relative">
@@ -133,7 +133,7 @@ export default function UniversalSearchModal({
                 <button
                   type="button"
                   onClick={() => setQuery("")}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 p-1 text-zinc-400 hover:text-white rounded-md transition-colors cursor-pointer"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 p-1.5 text-zinc-400 hover:text-white rounded-md transition-colors cursor-pointer"
                   title="Clear search"
                 >
                   <X className="h-4 w-4" />
@@ -141,14 +141,14 @@ export default function UniversalSearchModal({
               )}
             </div>
 
-            <div className="flex items-center gap-2 shrink-0">
-              <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-medium rounded-md bg-zinc-800 text-zinc-400 border border-zinc-700">
-                ESC to close
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+              <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-medium rounded-md bg-zinc-850 text-zinc-400 border border-zinc-750">
+                ESC
               </kbd>
               <button
                 type="button"
                 onClick={onClose}
-                className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer"
+                className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-850 transition-colors cursor-pointer active:scale-95"
                 title="Close"
               >
                 <X className="h-5 w-5" />
@@ -157,8 +157,8 @@ export default function UniversalSearchModal({
           </div>
 
           {/* Scope Filters */}
-          <div className="flex items-center gap-1.5 mt-3 pt-3 border-t border-zinc-850 flex-wrap">
-            <span className="text-[11px] font-medium text-zinc-500 mr-1">
+          <div className="flex items-center gap-1.5 mt-3 pt-2.5 border-t border-zinc-850/80 overflow-x-auto no-scrollbar scroll-smooth">
+            <span className="text-[11px] font-medium text-zinc-500 mr-1 shrink-0">
               Search In:
             </span>
             {(
@@ -238,35 +238,50 @@ export default function UniversalSearchModal({
                   className="p-3.5 sm:p-4 rounded-xl bg-zinc-950/70 border border-zinc-800 hover:border-zinc-700 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 group"
                 >
                   <div className="space-y-1.5 flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-zinc-900 text-zinc-400 border border-zinc-800">
+                    {/* Transporter ID & Name */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-zinc-900 text-zinc-400 border border-zinc-800 shrink-0">
                         #{transport.id}
                       </span>
                       <h4 className="text-sm sm:text-base font-bold text-white group-hover:text-orange-400 transition-colors truncate">
                         {transport.name}
                       </h4>
-                      {transport.isVerified && (
-                        <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-sky-950/60 text-sky-400 border border-sky-800/60">
-                          <ShieldCheck className="h-3 w-3" />
-                          <span>Verified</span>
-                        </span>
-                      )}
-                      {transport.isOpenNow && (
-                        <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800/60">
-                          <Clock className="h-3 w-3" />
-                          <span>Open</span>
-                        </span>
-                      )}
                     </div>
 
+                    {/* Verified and Open tags moved to new line */}
+                    {(transport.isVerified || transport.isOpenNow) && (
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {transport.isVerified && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-sky-950/60 text-sky-400 border border-sky-800/60 shrink-0">
+                            <ShieldCheck className="h-3 w-3" />
+                            <span>Verified</span>
+                          </span>
+                        )}
+                        {transport.isOpenNow && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 shrink-0">
+                            <Clock className="h-3 w-3" />
+                            <span>Open</span>
+                          </span>
+                        )}
+                      </div>
+                    )}
+
                     {/* Phone & GSTIN row */}
-                    <div className="flex items-center gap-3 text-xs text-zinc-400 font-mono flex-wrap">
+                    <div className="flex items-center gap-2 text-xs text-zinc-400 font-mono flex-wrap">
                       <span className="flex items-center gap-1 text-zinc-300">
                         <Phone className="h-3 w-3 text-emerald-400" />
                         <span>{transport.phoneNumber}</span>
                       </span>
                       {transport.gstNumber && (
-                        <span>• GSTIN: {transport.gstNumber}</span>
+                        <>
+                          <span
+                            className="text-zinc-600 font-bold select-none"
+                            aria-hidden="true"
+                          >
+                            •
+                          </span>
+                          <span>GSTIN: {transport.gstNumber}</span>
+                        </>
                       )}
                     </div>
 
@@ -295,13 +310,13 @@ export default function UniversalSearchModal({
                   </div>
 
                   {/* Quick Action Buttons */}
-                  <div className="flex items-center gap-2 self-end sm:self-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-zinc-850 w-full sm:w-auto justify-end">
+                  <div className="grid grid-cols-3 gap-2 w-full sm:w-auto pt-2.5 sm:pt-0 border-t sm:border-t-0 border-zinc-850/80 sm:flex sm:items-center sm:gap-2 justify-end shrink-0">
                     <a
                       href={`tel:${getCleanPhone(transport.phoneNumber)}`}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg bg-zinc-850 hover:bg-zinc-800 text-zinc-200 hover:text-white border border-zinc-750 transition-colors"
+                      className="inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl bg-zinc-850 hover:bg-zinc-800 text-zinc-200 hover:text-white border border-zinc-750 transition-colors active:scale-95"
                       title="Call primary line"
                     >
-                      <Phone className="h-3 w-3 text-emerald-400" />
+                      <Phone className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
                       <span>Call</span>
                     </a>
 
@@ -312,10 +327,10 @@ export default function UniversalSearchModal({
                       )}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/30 border border-emerald-500/30 transition-colors"
+                      className="inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/30 border border-emerald-500/30 transition-colors active:scale-95"
                       title="WhatsApp"
                     >
-                      <MessageCircle className="h-3 w-3" />
+                      <MessageCircle className="h-3.5 w-3.5 shrink-0" />
                       <span>Chat</span>
                     </a>
 
@@ -325,11 +340,11 @@ export default function UniversalSearchModal({
                         onClose();
                         router.push(`/transports/${transport.id}`);
                       }}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg bg-orange-600 hover:bg-orange-500 text-white transition-colors cursor-pointer shadow-sm shadow-orange-600/20"
+                      className="inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl bg-orange-600 hover:bg-orange-500 text-white transition-colors cursor-pointer shadow-sm shadow-orange-600/20 active:scale-95"
                       title="View full profile"
                     >
                       <span>View</span>
-                      <ExternalLink className="h-3 w-3" />
+                      <ExternalLink className="h-3.5 w-3.5 shrink-0" />
                     </button>
                   </div>
                 </div>
@@ -339,14 +354,16 @@ export default function UniversalSearchModal({
         </div>
 
         {/* Modal Footer info */}
-        <div className="p-3 px-5 border-t border-zinc-800 bg-zinc-950 text-xs text-zinc-500 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Building2 className="h-3.5 w-3.5 text-zinc-400" />
-            <span>
+        <div className="p-3 px-4 sm:px-5 border-t border-zinc-800 bg-zinc-950 text-xs text-zinc-500 flex items-center justify-between pb-safe sm:pb-3 shrink-0">
+          <div className="flex items-center gap-2 min-w-0">
+            <Building2 className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
+            <span className="text-[11px] sm:text-xs truncate">
               Search covers verified carriers, branch godowns & offices
             </span>
           </div>
-          <span className="hidden sm:inline">Press ESC to exit</span>
+          <span className="hidden sm:inline text-zinc-500 shrink-0">
+            Press ESC to exit
+          </span>
         </div>
       </div>
     </div>

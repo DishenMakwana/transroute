@@ -38,47 +38,70 @@ export default function SearchBar({
       : [];
 
   return (
-    <div className="relative z-40 bg-zinc-900/90 rounded-2xl p-4 sm:p-4.5 border border-zinc-800/90 shadow-2xl backdrop-blur-sm">
-      <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
+    <div className="relative z-40 bg-zinc-900/90 rounded-2xl p-3.5 sm:p-4.5 border border-zinc-800/90 shadow-2xl backdrop-blur-sm">
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-2.5 sm:gap-3">
         {/* Source Input */}
-        <CitySearchInput
-          id="source-input"
-          label="Dispatch Origin / Pickup City or PIN"
-          value={source}
-          onChange={onSourceChange}
-          placeholder="Search origin city, area or PIN code..."
-          availableCities={availableCities}
-          availableLocations={availableLocations}
-          theme="orange"
-        />
+        <div className="flex-1 min-w-0">
+          <CitySearchInput
+            id="source-input"
+            label="Origin (Pickup City / PIN)"
+            value={source}
+            onChange={onSourceChange}
+            placeholder="Search origin city, area or PIN code..."
+            availableCities={availableCities}
+            availableLocations={availableLocations}
+            theme="orange"
+          />
+        </div>
 
-        {/* Swap Button */}
-        <div className="flex items-center justify-center pt-5">
+        {/* Swap & Clear Action Center */}
+        <div className="relative flex items-center justify-center -my-1 lg:my-0 lg:pt-5 z-10 shrink-0">
+          <div
+            className="absolute inset-0 flex items-center lg:hidden"
+            aria-hidden="true"
+          >
+            <div className="w-full border-t border-zinc-800" />
+          </div>
           <button
             type="button"
             onClick={onSwap}
-            className="p-2.5 rounded-xl border border-zinc-800 bg-zinc-950 hover:bg-orange-950/50 hover:border-orange-700 hover:text-orange-400 text-zinc-300 transition-all cursor-pointer shadow-inner"
-            title="Swap Source and Destination"
+            className="relative p-2 sm:p-2.5 rounded-full border border-zinc-750 bg-zinc-950 hover:bg-orange-950/50 hover:border-orange-700 hover:text-orange-400 text-zinc-300 transition-all cursor-pointer shadow-md active:scale-90"
+            title="Swap Origin and Destination"
           >
-            <ArrowLeftRight className="h-4 w-4" />
+            <ArrowLeftRight className="h-4 w-4 rotate-90 lg:rotate-0 transition-transform" />
           </button>
+
+          {/* Mobile Clear Button */}
+          {hasActiveQuery && (
+            <button
+              type="button"
+              onClick={onClear}
+              className="lg:hidden absolute right-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-semibold text-rose-400 hover:bg-rose-950/50 border border-rose-800/60 bg-zinc-950 transition-colors cursor-pointer active:scale-95"
+              title="Clear Route"
+            >
+              <X className="h-3 w-3" />
+              <span>Clear</span>
+            </button>
+          )}
         </div>
 
         {/* Destination Input */}
-        <CitySearchInput
-          id="dest-input"
-          label="Delivery Destination / Dropoff Hub"
-          value={destination}
-          onChange={onDestinationChange}
-          placeholder="Search destination city, area or PIN code..."
-          availableCities={availableCities}
-          availableLocations={availableLocations}
-          theme="emerald"
-        />
+        <div className="flex-1 min-w-0">
+          <CitySearchInput
+            id="dest-input"
+            label="Destination (Dropoff Hub / PIN)"
+            value={destination}
+            onChange={onDestinationChange}
+            placeholder="Search destination city, area or PIN code..."
+            availableCities={availableCities}
+            availableLocations={availableLocations}
+            theme="emerald"
+          />
+        </div>
 
-        {/* Clear Search */}
+        {/* Desktop Clear Search */}
         {hasActiveQuery && (
-          <div className="flex items-center justify-center pt-5">
+          <div className="hidden lg:flex items-center justify-center pt-5 shrink-0">
             <button
               type="button"
               onClick={onClear}
@@ -91,12 +114,15 @@ export default function SearchBar({
         )}
       </div>
 
-      {/* Trade Corridor Shortcut Chips & Filter button on right */}
-      <div className="mt-3.5 pt-3 border-t border-zinc-800/80 flex flex-wrap items-center justify-between gap-3">
+      {/* Trade Corridor Shortcut Chips & Filter button */}
+      <div className="mt-3 pt-2.5 border-t border-zinc-800/80 flex items-center justify-between gap-2.5">
         {popularCorridors.length > 0 ? (
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
+          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1 overflow-x-auto no-scrollbar scroll-smooth py-0.5 touch-pan-x">
+            <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider shrink-0 hidden sm:inline">
               Popular Trade Corridors:
+            </span>
+            <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider shrink-0 sm:hidden">
+              Routes:
             </span>
             {popularCorridors.map((c) => {
               const isSelected = source === c.from && destination === c.to;
@@ -108,7 +134,7 @@ export default function SearchBar({
                     onSourceChange(c.from);
                     onDestinationChange(c.to);
                   }}
-                  className={`text-xs px-2.5 py-1 rounded-lg border transition-all cursor-pointer font-medium ${
+                  className={`text-xs px-2.5 py-1 rounded-lg border transition-all cursor-pointer font-medium whitespace-nowrap shrink-0 active:scale-95 ${
                     isSelected
                       ? "bg-orange-600 border-orange-500 text-white shadow-md shadow-orange-600/30"
                       : "bg-zinc-950 border-zinc-800 text-zinc-300 hover:bg-zinc-800 hover:border-zinc-700 hover:text-zinc-100"
@@ -127,13 +153,13 @@ export default function SearchBar({
           <button
             type="button"
             onClick={onOpenFilterModal}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer shrink-0 ml-auto ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer shrink-0 active:scale-95 ${
               activeFilterCount > 0
                 ? "bg-orange-500/15 border-orange-500/40 text-orange-400 hover:bg-orange-500/25 shadow-sm shadow-orange-500/10"
                 : "bg-zinc-950 border-zinc-800 hover:border-zinc-700 text-zinc-300 hover:text-white hover:bg-zinc-800"
             }`}
           >
-            <SlidersHorizontal className="h-3.5 w-3.5" />
+            <SlidersHorizontal className="h-3.5 w-3.5 shrink-0" />
             <span>Filters</span>
             {activeFilterCount > 0 && (
               <span className="h-4 min-w-[16px] px-1 rounded-full bg-orange-500 text-zinc-950 text-[10px] font-extrabold flex items-center justify-center">

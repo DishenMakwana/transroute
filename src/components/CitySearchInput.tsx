@@ -171,9 +171,18 @@ export default function CitySearchInput({
       {/* Label above input */}
       <label
         htmlFor={id}
-        className="block text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1.5 flex items-center justify-between"
+        className="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-300 mb-1.5 flex items-center justify-between"
       >
-        <span>{label}</span>
+        <span className="flex items-center gap-1.5">
+          <span
+            className={`inline-block h-2 w-2 rounded-full shrink-0 ${
+              isOrange
+                ? "bg-orange-500 shadow-xs shadow-orange-500/80"
+                : "bg-emerald-500 shadow-xs shadow-emerald-500/80"
+            }`}
+          />
+          <span>{label}</span>
+        </span>
         {value && (
           <span className="text-[10px] lowercase text-zinc-500 font-normal">
             active filter

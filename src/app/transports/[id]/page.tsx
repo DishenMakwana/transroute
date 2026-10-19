@@ -437,7 +437,8 @@ export default function TransportDetailPage() {
               className="inline-flex items-center gap-2 rounded-xl bg-zinc-900 px-3.5 py-2 text-xs font-semibold text-zinc-200 hover:text-white border border-zinc-800 hover:border-zinc-700 transition-all shadow-sm hover:shadow"
             >
               <ArrowLeft className="h-3.5 w-3.5 text-orange-400" />
-              <span>Back to Directory</span>
+              <span className="hidden sm:inline">Back to Directory</span>
+              <span className="sm:hidden">Back</span>
             </Link>
 
             <div className="h-4 w-px bg-zinc-800 hidden sm:block" />
@@ -564,11 +565,11 @@ export default function TransportDetailPage() {
             </div>
 
             {/* Quick Action Cluster */}
-            <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <div className="grid grid-cols-2 sm:flex sm:items-center gap-2.5 w-full lg:w-auto shrink-0">
               {/* Call */}
               <a
                 href={`tel:${getCleanPhone(transport.phoneNumber)}`}
-                className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-xl bg-zinc-800 hover:bg-zinc-750 text-white border border-zinc-700 transition-all shadow-md hover:-translate-y-0.5 active:translate-y-0"
+                className="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 text-xs font-bold rounded-xl bg-zinc-800 hover:bg-zinc-750 text-white border border-zinc-700 transition-all shadow-md active:scale-95"
               >
                 <Phone className="h-4 w-4 text-orange-400" />
                 <span>Call Carrier</span>
@@ -579,7 +580,7 @@ export default function TransportDetailPage() {
                 href={getWhatsAppLink(transport.phoneNumber, transport.name)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-lg shadow-emerald-600/25 hover:-translate-y-0.5 active:translate-y-0"
+                className="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-lg shadow-emerald-600/25 active:scale-95"
               >
                 <MessageCircle className="h-4 w-4" />
                 <span>WhatsApp Quote</span>
@@ -589,7 +590,7 @@ export default function TransportDetailPage() {
               <button
                 type="button"
                 onClick={() => setIsEditModalOpen(true)}
-                className="inline-flex items-center gap-2 px-3.5 py-2.5 text-xs font-semibold rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 transition-all cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 text-xs font-semibold rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 transition-all cursor-pointer"
                 title="Edit Carrier Details"
               >
                 <Pencil className="h-4 w-4 text-zinc-400" />
@@ -600,17 +601,18 @@ export default function TransportDetailPage() {
               <button
                 type="button"
                 onClick={() => setIsDeleteModalOpen(true)}
-                className="p-2.5 rounded-xl bg-zinc-900 text-zinc-500 hover:text-rose-400 hover:bg-rose-950/40 border border-zinc-800 hover:border-rose-900 transition-all cursor-pointer"
+                className="p-2.5 rounded-xl bg-zinc-900 text-zinc-500 hover:text-rose-400 hover:bg-rose-950/40 border border-zinc-800 hover:border-rose-900 transition-all cursor-pointer flex items-center justify-center gap-1.5"
                 title="Delete Carrier"
               >
                 <Trash2 className="h-4 w-4" />
+                <span className="sm:hidden text-xs font-semibold">Delete</span>
               </button>
             </div>
           </div>
         </section>
 
         {/* 6-Item KPI Bento Strip */}
-        <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
           <div className="rounded-2xl bg-zinc-900/80 p-5 border border-zinc-800/90 shadow-xl backdrop-blur-sm">
             <div className="flex items-center justify-between">
               <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">

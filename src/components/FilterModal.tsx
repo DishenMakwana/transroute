@@ -89,23 +89,23 @@ export default function FilterModal({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-5">
           <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: 10 }}
-            transition={{ duration: 0.18, ease: "easeOut" }}
-            className="bg-zinc-950 rounded-2xl border border-zinc-800/90 shadow-2xl w-full max-w-4xl overflow-hidden my-4 flex flex-col max-h-[92vh] text-zinc-100"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 40 }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
+            className="bg-zinc-950 rounded-t-3xl sm:rounded-2xl border border-zinc-800/90 shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[90vh] text-zinc-100"
           >
             {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-zinc-800/80 flex items-center justify-between bg-zinc-900/40">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-400">
+            <div className="px-4.5 sm:px-6 py-3.5 sm:py-4 border-b border-zinc-800/80 flex items-center justify-between bg-zinc-900/40 shrink-0">
+              <div className="flex items-center gap-2.5 sm:gap-3">
+                <div className="p-2 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-400 shrink-0">
                   <SlidersHorizontal className="h-4 w-4" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h2 className="text-base font-bold text-zinc-100">
+                    <h2 className="text-sm sm:text-base font-bold text-zinc-100">
                       Filter Transporters
                     </h2>
                     {activeCount > 0 && (
@@ -114,9 +114,9 @@ export default function FilterModal({
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-zinc-400">
+                  <p className="text-[11px] sm:text-xs text-zinc-400 line-clamp-1">
                     Select cargo weights, box cartons, budget constraints, and
-                    godown facilities
+                    facilities
                   </p>
                 </div>
               </div>
@@ -124,7 +124,7 @@ export default function FilterModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="h-8 w-8 rounded-full flex items-center justify-center text-zinc-400 hover:text-zinc-100 hover:bg-zinc-850 transition-colors cursor-pointer"
+                className="h-8 w-8 rounded-full flex items-center justify-center text-zinc-400 hover:text-zinc-100 hover:bg-zinc-850 transition-colors cursor-pointer shrink-0 ml-2"
                 title="Close filters"
               >
                 <X className="h-4 w-4" />
@@ -132,7 +132,7 @@ export default function FilterModal({
             </div>
 
             {/* Modal Body: Direct Pill Lists (Zero Nested Dropdowns) */}
-            <div className="p-6 overflow-y-auto space-y-5 flex-1">
+            <div className="p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-5 flex-1">
               {/* Section 1: Weight Unit */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
@@ -404,11 +404,11 @@ export default function FilterModal({
             </div>
 
             {/* Modal Footer: Clear All & Apply Action */}
-            <div className="px-6 py-4 border-t border-zinc-800/80 bg-zinc-900/50 flex items-center justify-between gap-3">
+            <div className="px-4.5 sm:px-6 py-3.5 sm:py-4 border-t border-zinc-800/80 bg-zinc-900/90 flex items-center justify-between gap-3 shrink-0">
               <button
                 type="button"
                 onClick={onResetFilters}
-                className="text-xs font-medium text-zinc-400 hover:text-zinc-200 underline underline-offset-4 transition-colors cursor-pointer flex items-center gap-1.5"
+                className="text-xs font-medium text-zinc-400 hover:text-zinc-200 underline underline-offset-4 transition-colors cursor-pointer flex items-center gap-1.5 py-1"
               >
                 <RotateCcw className="h-3.5 w-3.5" />
                 <span>Clear all</span>
@@ -417,7 +417,7 @@ export default function FilterModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold rounded-xl bg-orange-500 hover:bg-orange-600 text-zinc-950 shadow-lg shadow-orange-500/20 transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold rounded-xl bg-orange-500 hover:bg-orange-600 text-zinc-950 shadow-lg shadow-orange-500/20 transition-all cursor-pointer active:scale-95"
               >
                 <Check className="h-4 w-4" />
                 <span>Show {totalCount} results</span>

@@ -311,17 +311,17 @@ export default function TransportModal({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+      <div className="fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
         <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.96 }}
-          className="bg-zinc-900 rounded-2xl border border-zinc-800 shadow-2xl w-full max-w-4xl overflow-hidden my-6 flex flex-col max-h-[92vh] text-zinc-100"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 30 }}
+          className="bg-zinc-900 rounded-t-3xl sm:rounded-2xl border border-zinc-800 shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[92vh] text-zinc-100"
         >
           {/* Modal Header */}
-          <div className="px-6 py-4 border-b border-zinc-800 flex items-center justify-between bg-zinc-950/70">
+          <div className="px-4.5 sm:px-6 py-3.5 sm:py-4 border-b border-zinc-800 flex items-center justify-between bg-zinc-950/70 shrink-0">
             <div>
-              <h2 className="text-base font-bold text-zinc-100">
+              <h2 className="text-sm sm:text-base font-bold text-zinc-100">
                 {isEdit ? "Edit Transport Option" : "Add New Transport Option"}
               </h2>
               <p className="text-xs text-zinc-400">
@@ -772,7 +772,7 @@ export default function TransportModal({
             </div>
 
             {/* Modal Actions */}
-            <div className="pt-4 border-t border-zinc-800 flex items-center justify-end gap-3">
+            <div className="sticky bottom-0 bg-zinc-900/95 backdrop-blur-md pt-3.5 pb-2 border-t border-zinc-800 flex items-center justify-end gap-3 shrink-0">
               <button
                 type="button"
                 onClick={onClose}
@@ -784,7 +784,7 @@ export default function TransportModal({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-5 py-2 text-xs font-semibold rounded-xl bg-orange-600 hover:bg-orange-500 text-white transition-all shadow-lg shadow-orange-600/30 disabled:opacity-50 cursor-pointer"
+                className="px-5 py-2 text-xs font-semibold rounded-xl bg-orange-600 hover:bg-orange-500 text-white transition-all shadow-lg shadow-orange-600/30 disabled:opacity-50 cursor-pointer active:scale-95"
               >
                 {isSubmitting
                   ? "Saving..."
