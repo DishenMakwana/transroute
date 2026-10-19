@@ -11,11 +11,17 @@ async function seed() {
 
     // Ensure schema exists and reset tables + restart sequences from 1
     await client.query("CREATE SCHEMA IF NOT EXISTS transport;");
-    await client.query(
-      "TRUNCATE transport.transport_pricing, transport.transport_locations, transport.transports RESTART IDENTITY CASCADE;"
-    );
+    try {
+      await client.query(
+        "TRUNCATE transport.transport_pricing, transport.transport_locations, transport.transports RESTART IDENTITY CASCADE;"
+      );
+      console.log("Existing tables truncated and sequences reset to 1.");
+    } catch {
+      console.log(
+        "Tables empty or not yet created. Proceeding to insert seed records..."
+      );
+    }
     client.release();
-    console.log("Existing tables truncated and sequences reset to 1.");
 
     for (const t of initialTransportsData) {
       console.log(`Seeding transporter: ${t.name}...`);

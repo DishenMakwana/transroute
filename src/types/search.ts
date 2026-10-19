@@ -6,6 +6,7 @@ export type SortOption =
   "price_asc" | "price_desc" | "name_asc" | "name_desc" | "hours";
 
 export interface SearchFilters {
+  query?: string;
   source?: string;
   destination?: string;
   minPrice?: number;
@@ -59,3 +60,5 @@ export const VALID_BOX_SIZES: BoxSizeUnit[] = [
   "per_cft",
   "per_cbm",
 ];
+
+export type SearchScope = "all" | "name" | "phone" | "city" | "pin";

@@ -194,6 +194,42 @@ transroute/
 
 ---
 
+## ⚡ Deploy to Vercel (with Database)
+
+TransRoute is optimized for 1-click deployment on [Vercel](https://vercel.com) with managed PostgreSQL:
+
+### Option A: Vercel Dashboard (1-Click)
+1. Push this repository to GitHub.
+2. Go to [vercel.com/new](https://vercel.com/new) and import the repository.
+3. In the Vercel Project Dashboard, navigate to the **Storage** tab.
+4. Click **Create Database** → Select **Postgres (Neon)**.
+5. Vercel automatically injects `POSTGRES_URL` and `DATABASE_URL` into your environment variables.
+6. Push schema & seed data from your local machine:
+   ```bash
+   DATABASE_URL="<your-vercel-postgres-connection-string>" bun run db:push
+   DATABASE_URL="<your-vercel-postgres-connection-string>" bun run db:seed
+   ```
+7. Trigger a redeploy — your site is live with serverless PostgreSQL!
+
+### Option B: Deploying via Vercel CLI
+```bash
+# 1. Install Vercel CLI
+bun add -g vercel
+
+# 2. Link & Deploy
+vercel
+
+# 3. Add database connection string
+vercel env add DATABASE_URL
+
+# 4. Deploy to Production
+vercel --prod
+```
+
+> **Note**: Even if deployed without a database, TransRoute automatically falls back to its built-in in-memory dataset, ensuring zero downtime.
+
+---
+
 ## 🐳 Docker Deployment (Optional)
 
 Build and run the production image using Docker:

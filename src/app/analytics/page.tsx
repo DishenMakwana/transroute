@@ -43,6 +43,7 @@ import {
 } from "@/types";
 import toast from "react-hot-toast";
 import CustomDropdown from "@/components/CustomDropdown";
+import { getLocalCache, setLocalCache, clearLocalCache } from "@/helpers/cache";
 
 // Recharts theme colors tailored for high-contrast dark theme
 const PIE_COLORS = [
@@ -145,6 +146,7 @@ function KpiCard({
 export default function AnalyticsPage() {
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [filterState, setFilterState] = useState<AnalyticsFilterState>({
     selectedState: "all",
     selectedUnit: "all",
@@ -152,18 +154,77 @@ export default function AnalyticsPage() {
   });
 
   const fetchAnalytics = useCallback(async () => {
-    setIsLoading(true);
+    const cached = getLocalCache<AnalyticsSummary>("analytics_summary");
+    if (cached) {
+      setAnalytics(cached);
+      setIsLoading(false);
+    } else {
+      setIsLoading(true);
+    }
+
     try {
       const res = await fetch("/api/analytics");
-      if (!res.ok) throw new Error("Failed to load analytics");
+      if (!res.ok) {
+        if (!cached) throw new Error("Failed to load analytics");
+        return;
+      }
       const data: AnalyticsSummary = await res.json();
       setAnalytics(data);
+      setLocalCache("analytics_summary", data);
     } catch {
-      toast.error("Failed to load analytics data");
+      if (!cached) toast.error("Failed to load analytics data");
     } finally {
       setIsLoading(false);
     }
   }, []);
+
+  const handleManualRefresh = async () => {
+    if (isRefreshing) return;
+    setIsRefreshing(true);
+    clearLocalCache("analytics_summary");
+
+    const refreshOperation = (async () => {
+      const url = `/api/analytics?refresh=true&_t=${Date.now()}`;
+      const [res] = await Promise.all([
+        fetch(url, {
+          cache: "no-store",
+          headers: { "Cache-Control": "no-cache, no-store" },
+        }),
+        // Ensure at least 650ms smooth spin animation & user feedback
+        new Promise((resolve) => setTimeout(resolve, 650)),
+      ]);
+
+      if (!res.ok) throw new Error("Failed to load analytics");
+      const data: AnalyticsSummary = await res.json();
+      setAnalytics(data);
+      setLocalCache("analytics_summary", data);
+      return data;
+    })();
+
+    toast.promise(
+      refreshOperation,
+      {
+        loading: "Clearing cache & recalculating logistics metrics...",
+        success: "Cache cleared & analytics data refreshed!",
+        error: "Failed to refresh analytics data",
+      },
+      {
+        style: {
+          background: "#18181b",
+          color: "#f4f4f5",
+          border: "1px solid #27272a",
+        },
+      }
+    );
+
+    try {
+      await refreshOperation;
+    } catch {
+      // toast.promise displays error message automatically
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   useEffect(() => {
     fetchAnalytics();
@@ -374,14 +435,25 @@ export default function AnalyticsPage() {
             )}
 
             <button
-              onClick={fetchAnalytics}
-              disabled={isLoading}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-300 hover:text-white border border-zinc-800 hover:border-zinc-700 transition-colors"
+              onClick={handleManualRefresh}
+              disabled={isRefreshing || isLoading}
+              className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-medium transition-all active:scale-95 cursor-pointer disabled:cursor-not-allowed ${
+                isRefreshing
+                  ? "bg-orange-500/10 text-orange-400 border border-orange-500/40 shadow-[0_0_15px_rgba(249,115,22,0.15)]"
+                  : "bg-zinc-900 text-zinc-300 hover:text-white border border-zinc-800 hover:border-zinc-700"
+              }`}
+              title="Clear cache and reload analytics metrics"
             >
               <RefreshCw
-                className={`h-3.5 w-3.5 text-zinc-400 ${isLoading ? "animate-spin" : ""}`}
+                className={`h-3.5 w-3.5 transition-transform ${
+                  isRefreshing
+                    ? "animate-spin text-orange-400"
+                    : "text-zinc-400"
+                }`}
               />
-              <span className="hidden sm:inline">Refresh Data</span>
+              <span className="hidden sm:inline">
+                {isRefreshing ? "Refreshing..." : "Refresh Data"}
+              </span>
             </button>
             <div className="rounded-full bg-orange-500/10 px-3 py-1 text-xs font-semibold text-orange-400 border border-orange-500/20">
               India Road Cargo

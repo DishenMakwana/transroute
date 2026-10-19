@@ -14,19 +14,33 @@ const globalWithPool = globalThis as unknown as GlobalWithPool;
 let pool: pg.Pool;
 let db: NodePgDatabase<typeof schema>;
 
+// Support both standard DATABASE_URL and Vercel Postgres POSTGRES_URL
 const connectionString =
   process.env.DATABASE_URL ||
+  process.env.POSTGRES_URL ||
   "postgresql://postgres:postgres@localhost:5432/transport_db";
 
+// Auto-detect cloud providers and parameters that mandate SSL
+const isSslRequired =
+  connectionString.includes("sslmode=require") ||
+  connectionString.includes("neon.tech") ||
+  connectionString.includes("supabase.co") ||
+  connectionString.includes("vercel-storage.com") ||
+  connectionString.includes("railway.app") ||
+  connectionString.includes("render.com") ||
+  connectionString.includes("aivencloud.com") ||
+  process.env.DATABASE_SSL === "true";
+
+const sslConfig = isSslRequired ? { rejectUnauthorized: false } : undefined;
+
 if (process.env.NODE_ENV === "production") {
+  // Conservative pool size for serverless lambda instances (e.g. Vercel)
   pool = new Pool({
     connectionString,
-    max: 20,
+    max: 5,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 5000,
-    ssl: connectionString.includes("neon.tech")
-      ? { rejectUnauthorized: false }
-      : undefined,
+    ssl: sslConfig,
   });
   db = drizzle(pool, { schema });
 } else {
@@ -36,9 +50,7 @@ if (process.env.NODE_ENV === "production") {
       max: 10,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 5000,
-      ssl: connectionString.includes("neon.tech")
-        ? { rejectUnauthorized: false }
-        : undefined,
+      ssl: sslConfig,
     });
     globalWithPool.drizzleDb = drizzle(globalWithPool.pgPool, { schema });
   }

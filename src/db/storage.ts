@@ -83,16 +83,23 @@ let cachedTransports: CacheEntry<TransportWithDetails[]> | null = null;
 let cachedAnalytics: CacheEntry<AnalyticsSummary> | null = null;
 const CACHE_TTL_MS = 60 * 1000; // 60 seconds TTL
 
-function invalidateCache(): void {
+export function invalidateCache(): void {
   cachedTransports = null;
   cachedAnalytics = null;
 }
 
-export async function getAllTransportsWithDetails(): Promise<
-  TransportWithDetails[]
-> {
+export async function getAllTransportsWithDetails(
+  bypassCache = false
+): Promise<TransportWithDetails[]> {
+  if (bypassCache) {
+    invalidateCache();
+  }
   const now = Date.now();
-  if (cachedTransports && now - cachedTransports.timestamp < CACHE_TTL_MS) {
+  if (
+    !bypassCache &&
+    cachedTransports &&
+    now - cachedTransports.timestamp < CACHE_TTL_MS
+  ) {
     return cachedTransports.data;
   }
 
@@ -209,6 +216,30 @@ export async function searchTransports(
   // Filter: If destination provided, must have matchedDestination
   if (destTerm) {
     filtered = filtered.filter((t) => Boolean(t.matchedDestination));
+  }
+
+  // Filter: General query across name, phone, city, pin, gstin, or address
+  const queryTerm = filters.query?.trim().toLowerCase();
+  if (queryTerm) {
+    const rawDigits = queryTerm.replace(/\D/g, "");
+    filtered = filtered.filter((t) => {
+      if (t.name.toLowerCase().includes(queryTerm)) return true;
+      if (t.gstNumber?.toLowerCase().includes(queryTerm)) return true;
+      const phoneDigits = t.phoneNumber.replace(/\D/g, "");
+      if (rawDigits && phoneDigits.includes(rawDigits)) return true;
+      return t.locations.some((loc) => {
+        if (loc.city.toLowerCase().includes(queryTerm)) return true;
+        if (loc.pinCode.includes(queryTerm)) return true;
+        if (loc.name.toLowerCase().includes(queryTerm)) return true;
+        if (loc.state.toLowerCase().includes(queryTerm)) return true;
+        if (loc.address.toLowerCase().includes(queryTerm)) return true;
+        if (loc.contactPhone && rawDigits) {
+          const locPhoneDigits = loc.contactPhone.replace(/\D/g, "");
+          if (locPhoneDigits.includes(rawDigits)) return true;
+        }
+        return false;
+      });
+    });
   }
 
   // Filter: Operating Status (Open Now)
@@ -610,13 +641,22 @@ export async function deleteTransport(id: number): Promise<boolean> {
   return true;
 }
 
-export async function getAnalytics(): Promise<AnalyticsSummary> {
+export async function getAnalytics(
+  bypassCache = false
+): Promise<AnalyticsSummary> {
+  if (bypassCache) {
+    invalidateCache();
+  }
   const now = Date.now();
-  if (cachedAnalytics && now - cachedAnalytics.timestamp < CACHE_TTL_MS) {
+  if (
+    !bypassCache &&
+    cachedAnalytics &&
+    now - cachedAnalytics.timestamp < CACHE_TTL_MS
+  ) {
     return cachedAnalytics.data;
   }
 
-  const all = await getAllTransportsWithDetails();
+  const all = await getAllTransportsWithDetails(bypassCache);
 
   // Aggregate rates by unit
   const unitMap: Record<string, number[]> = {};

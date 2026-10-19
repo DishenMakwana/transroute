@@ -23,6 +23,7 @@ import SearchBar from "@/components/SearchBar";
 import FilterModal from "@/components/FilterModal";
 import TransportList from "@/components/TransportList";
 import TransportModal from "@/components/TransportModal";
+import UniversalSearchModal from "@/components/UniversalSearchModal";
 import {
   TransportWithDetails,
   SearchFilters,
@@ -40,6 +41,7 @@ import {
   LocationSuggestion,
 } from "@/types";
 import toast from "react-hot-toast";
+import { getLocalCache, setLocalCache } from "@/helpers/cache";
 
 function HomePageContent() {
   const searchParams = useSearchParams();
@@ -48,6 +50,7 @@ function HomePageContent() {
   const initialParams = useMemo(() => {
     const src = searchParams.get("source") || "";
     const dest = searchParams.get("destination") || "";
+    const queryP = searchParams.get("query") || searchParams.get("q") || "";
     const openNow = searchParams.get("openNow") === "true";
     const minP = searchParams.get("minPrice");
     const maxP = searchParams.get("maxPrice");
@@ -57,6 +60,7 @@ function HomePageContent() {
     const sort = searchParams.get("sortBy");
 
     const parsedFilters: SearchFilters = {
+      query: queryP || undefined,
       openNow: openNow || undefined,
       minPrice: minP && !isNaN(Number(minP)) ? Number(minP) : undefined,
       maxPrice: maxP && !isNaN(Number(maxP)) ? Number(maxP) : undefined,
@@ -121,12 +125,26 @@ function HomePageContent() {
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState<boolean>(false);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
   const [isExporting, setIsExporting] = useState<boolean>(false);
+
+  // Global keyboard shortcut (⌘K / Ctrl+K) to open search modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setIsSearchModalOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   // Synchronize state changes to the browser URL
   useEffect(() => {
     const params = new URLSearchParams();
 
+    if (filters.query?.trim()) params.set("q", filters.query.trim());
     if (source.trim()) params.set("source", source.trim());
     if (destination.trim()) params.set("destination", destination.trim());
     if (filters.openNow) params.set("openNow", "true");
@@ -164,6 +182,7 @@ function HomePageContent() {
       const current = new URLSearchParams(window.location.search);
       const src = current.get("source") || "";
       const dest = current.get("destination") || "";
+      const queryParam = current.get("q") || current.get("query") || "";
       const openNow = current.get("openNow") === "true";
       const minP = current.get("minPrice");
       const maxP = current.get("maxPrice");
@@ -177,6 +196,7 @@ function HomePageContent() {
       setSource(src);
       setDestination(dest);
       setFilters({
+        query: queryParam || undefined,
         openNow: openNow || undefined,
         minPrice: minP && !isNaN(Number(minP)) ? Number(minP) : undefined,
         maxPrice: maxP && !isNaN(Number(maxP)) ? Number(maxP) : undefined,
@@ -220,6 +240,7 @@ function HomePageContent() {
   const fetchTransports = useCallback(async () => {
     const params = new URLSearchParams();
 
+    if (filters.query?.trim()) params.append("query", filters.query.trim());
     if (source.trim()) params.append("source", source.trim());
     if (destination.trim()) params.append("destination", destination.trim());
     if (filters.openNow) params.append("openNow", "true");
@@ -236,8 +257,22 @@ function HomePageContent() {
 
     const queryString = params.toString();
 
-    // Instant cache hit: render immediately with zero network delay
-    if (queryCacheRef.current.has(queryString)) {
+    // SWR / Local Storage cache hit: render immediately with zero network delay
+    const localHit = getLocalCache<SearchResult>(`search_${queryString}`);
+    if (localHit) {
+      setTransports(localHit.transports);
+      setTotalCount(localHit.totalCount);
+      if (localHit.availableCities && localHit.availableCities.length > 0) {
+        setAvailableCities(localHit.availableCities);
+      }
+      if (
+        localHit.availableLocations &&
+        localHit.availableLocations.length > 0
+      ) {
+        setAvailableLocations(localHit.availableLocations);
+      }
+      setIsLoading(false);
+    } else if (queryCacheRef.current.has(queryString)) {
       const cached = queryCacheRef.current.get(queryString)!;
       setTransports(cached.transports);
       setTotalCount(cached.totalCount);
@@ -248,19 +283,20 @@ function HomePageContent() {
         setAvailableLocations(cached.availableLocations);
       }
       setIsLoading(false);
-      return;
+    } else {
+      setIsLoading(true);
     }
 
-    setIsLoading(true);
     try {
       const res = await fetch(`/api/transports?${queryString}`);
       if (!res.ok) {
-        toast.error("Failed to load transports");
+        if (!localHit) toast.error("Failed to load transports");
         return;
       }
 
       const data = (await res.json()) as SearchResult;
       queryCacheRef.current.set(queryString, data);
+      setLocalCache(`search_${queryString}`, data);
       setTransports(data.transports);
       setTotalCount(data.totalCount);
       if (data.availableCities && data.availableCities.length > 0) {
@@ -271,18 +307,25 @@ function HomePageContent() {
       }
     } catch (err) {
       console.error(err);
-      toast.error("Could not fetch transports. Please try again.");
+      if (!localHit)
+        toast.error("Could not fetch transports. Please try again.");
     } finally {
       setIsLoading(false);
     }
   }, [source, destination, filters]);
 
   const fetchAnalytics = useCallback(async () => {
+    const cachedAnalytics =
+      getLocalCache<AnalyticsSummary>("analytics_summary");
+    if (cachedAnalytics) {
+      setAnalytics(cachedAnalytics);
+    }
     try {
       const res = await fetch("/api/analytics");
       if (res.ok) {
         const data = (await res.json()) as AnalyticsSummary;
         setAnalytics(data);
+        setLocalCache("analytics_summary", data);
       }
     } catch (err) {
       console.error("Failed to load analytics", err);
@@ -291,12 +334,8 @@ function HomePageContent() {
 
   // Concurrent parallel execution on mount and when query filters change
   useEffect(() => {
-    fetchTransports();
-  }, [fetchTransports]);
-
-  useEffect(() => {
-    fetchAnalytics();
-  }, [fetchAnalytics]);
+    Promise.all([fetchTransports(), fetchAnalytics()]);
+  }, [fetchTransports, fetchAnalytics]);
 
   const handleSwap = () => {
     setSource(destination);
@@ -333,6 +372,7 @@ function HomePageContent() {
 
   const activeFilterCount = useMemo(() => {
     let count = 0;
+    if (filters.query?.trim()) count++;
     if (filters.weightUnit) count++;
     if (filters.boxSizeUnit) count++;
     if (filters.maxPrice !== undefined && filters.maxPrice > 0) count++;
@@ -404,6 +444,7 @@ function HomePageContent() {
         analytics={analytics}
         onOpenAddModal={handleOpenAdd}
         onExportExcel={handleExportExcel}
+        onOpenSearchModal={() => setIsSearchModalOpen(true)}
         isExporting={isExporting}
       />
 
@@ -532,6 +573,17 @@ function HomePageContent() {
         onFilterChange={handleFilterChange}
         onResetFilters={handleResetFilters}
         totalCount={totalCount}
+      />
+
+      {/* Universal Search Modal (Spotlight ⌘K) */}
+      <UniversalSearchModal
+        isOpen={isSearchModalOpen}
+        onClose={() => setIsSearchModalOpen(false)}
+        transports={transports}
+        onFilterDirectory={(keyword) => {
+          setFilters((prev) => ({ ...prev, query: keyword }));
+          setCurrentPage(1);
+        }}
       />
     </div>
   );

@@ -3,13 +3,14 @@ import {
   updateTransport,
   deleteTransport,
   getAllTransportsWithDetails,
+  invalidateCache,
 } from "@/db/storage";
 import { UpdateTransportInput } from "@/types";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -22,7 +23,15 @@ export async function GET(
       );
     }
 
-    const all = await getAllTransportsWithDetails();
+    const { searchParams } = new URL(request.url);
+    const shouldRefresh =
+      searchParams.get("refresh") === "true" ||
+      searchParams.get("clearCache") === "true";
+    if (shouldRefresh) {
+      invalidateCache();
+    }
+
+    const all = await getAllTransportsWithDetails(shouldRefresh);
     const found = all.find((t) => t.id === numId);
 
     if (!found) {

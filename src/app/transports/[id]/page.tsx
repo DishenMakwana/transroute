@@ -39,6 +39,7 @@ import {
   FreightEstimatorState,
   DropdownOption,
 } from "@/types";
+import { getLocalCache, setLocalCache, clearLocalCache } from "@/helpers/cache";
 
 export default function TransportDetailPage() {
   const params = useParams();
@@ -50,6 +51,7 @@ export default function TransportDetailPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isReloading, setIsReloading] = useState(false);
 
   // Facility filter & search state
   const [facilityTab, setFacilityTab] = useState<FacilityTabFilter>("all");
@@ -61,34 +63,70 @@ export default function TransportDetailPage() {
     quantity: 10,
   });
 
-  const fetchTransport = useCallback(async () => {
-    if (!id) return;
-    setIsLoading(true);
-    try {
-      const res = await fetch(`/api/transports/${id}`);
-      if (!res.ok) {
-        if (res.status === 404) {
-          setTransport(null);
-          return;
-        }
-        throw new Error("Failed to load transport details");
-      }
-      const data: TransportWithDetails = await res.json();
-      setTransport(data);
+  const fetchTransport = useCallback(
+    async (isManualRefresh = false) => {
+      if (!id) return;
 
-      // Initialize estimator with first pricing rule if available
-      if (data.pricing && data.pricing.length > 0) {
-        setEstimator((prev) => ({
-          ...prev,
-          unit: prev.unit || data.pricing[0].unit,
-        }));
+      const cacheKey = `transport_${id}`;
+      if (isManualRefresh) {
+        clearLocalCache(cacheKey);
+        setIsLoading(true);
+      } else {
+        const cached = getLocalCache<TransportWithDetails>(cacheKey);
+        if (cached) {
+          setTransport(cached);
+          if (cached.pricing && cached.pricing.length > 0) {
+            setEstimator((prev) => ({
+              ...prev,
+              unit: prev.unit || cached.pricing[0].unit,
+            }));
+          }
+          setIsLoading(false);
+        } else {
+          setIsLoading(true);
+        }
       }
-    } catch {
-      toast.error("Failed to load carrier details");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [id]);
+
+      try {
+        const url = isManualRefresh
+          ? `/api/transports/${id}?refresh=true&_t=${Date.now()}`
+          : `/api/transports/${id}`;
+        const res = await fetch(url, {
+          cache: isManualRefresh ? "no-store" : "default",
+          headers: isManualRefresh
+            ? { "Cache-Control": "no-cache, no-store" }
+            : {},
+        });
+        if (!res.ok) {
+          if (res.status === 404) {
+            setTransport(null);
+            return;
+          }
+          throw new Error("Failed to load transport details");
+        }
+        const data: TransportWithDetails = await res.json();
+        setTransport(data);
+        setLocalCache(cacheKey, data);
+
+        // Initialize estimator with first pricing rule if available
+        if (data.pricing && data.pricing.length > 0) {
+          setEstimator((prev) => ({
+            ...prev,
+            unit: prev.unit || data.pricing[0].unit,
+          }));
+        }
+
+        if (isManualRefresh) {
+          toast.success("Carrier details reloaded");
+        }
+      } catch {
+        toast.error("Failed to load carrier details");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [id]
+  );
 
   useEffect(() => {
     fetchTransport();
@@ -453,11 +491,26 @@ export default function TransportDetailPage() {
             </button>
 
             <button
-              onClick={fetchTransport}
-              className="p-2 rounded-xl bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800 hover:border-zinc-700 transition-colors cursor-pointer"
+              onClick={async () => {
+                if (isReloading) return;
+                setIsReloading(true);
+                await Promise.all([
+                  fetchTransport(true),
+                  new Promise((r) => setTimeout(r, 600)),
+                ]);
+                setIsReloading(false);
+              }}
+              disabled={isReloading}
+              className={`p-2 rounded-xl transition-all active:scale-95 cursor-pointer disabled:cursor-not-allowed ${
+                isReloading
+                  ? "bg-orange-500/10 text-orange-400 border border-orange-500/40"
+                  : "bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800 hover:border-zinc-700"
+              }`}
               title="Reload carrier details"
             >
-              <RefreshCw className="h-3.5 w-3.5" />
+              <RefreshCw
+                className={`h-3.5 w-3.5 transition-transform ${isReloading ? "animate-spin text-orange-400" : ""}`}
+              />
             </button>
           </div>
         </div>

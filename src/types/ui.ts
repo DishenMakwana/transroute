@@ -27,6 +27,7 @@ export interface HeaderProps {
   analytics: AnalyticsSummary | null;
   onOpenAddModal: () => void;
   onExportExcel: () => void;
+  onOpenSearchModal?: () => void;
   isExporting: boolean;
 }
 
@@ -122,4 +123,11 @@ export interface PaginationProps {
   onPageSizeChange: (size: number) => void;
   pageSizeOptions?: number[];
   className?: string;
+}
+
+export interface UniversalSearchModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  transports: TransportWithDetails[];
+  onFilterDirectory?: (query: string) => void;
 }

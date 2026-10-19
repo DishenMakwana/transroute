@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { searchTransports, createTransport } from "@/db/storage";
+import {
+  searchTransports,
+  createTransport,
+  invalidateCache,
+} from "@/db/storage";
 import { SearchFilters, CreateTransportInput } from "@/types";
 
 export const dynamic = "force-dynamic";
@@ -8,7 +12,17 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
+    const shouldRefresh =
+      searchParams.get("refresh") === "true" ||
+      searchParams.get("clearCache") === "true";
+    if (shouldRefresh) {
+      invalidateCache();
+    }
+
+    const queryParam = searchParams.get("query") || searchParams.get("q");
+
     const filters: SearchFilters = {
+      query: queryParam ? queryParam.trim() : undefined,
       source: searchParams.get("source") || undefined,
       destination: searchParams.get("destination") || undefined,
       minPrice: searchParams.get("minPrice")

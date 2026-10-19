@@ -2,12 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Plus, FileSpreadsheet } from "lucide-react";
+import { Plus, FileSpreadsheet, Search } from "lucide-react";
 import { HeaderProps } from "@/types";
 
 export default function Header({
   onOpenAddModal,
   onExportExcel,
+  onOpenSearchModal,
   isExporting,
 }: HeaderProps) {
   return (
@@ -43,6 +44,23 @@ export default function Header({
 
           {/* Action CTAs */}
           <div className="flex items-center gap-2.5">
+            {/* Universal Search Transporters Button */}
+            {onOpenSearchModal && (
+              <button
+                type="button"
+                onClick={onOpenSearchModal}
+                className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-2 text-xs font-semibold rounded-xl border border-zinc-750 bg-zinc-900/90 hover:bg-zinc-800 hover:border-zinc-650 text-zinc-300 hover:text-white transition-all shadow-xs cursor-pointer group"
+                title="Search transporters by name, phone, city, or PIN (⌘K)"
+              >
+                <Search className="h-3.5 w-3.5 text-orange-400 group-hover:scale-110 transition-transform" />
+                <span className="hidden sm:inline">Search Transporters</span>
+                <span className="sm:hidden">Search</span>
+                <kbd className="hidden lg:inline-flex items-center px-1.5 py-0.5 text-[10px] font-mono font-medium rounded-md bg-zinc-950 text-zinc-400 border border-zinc-800">
+                  ⌘K
+                </kbd>
+              </button>
+            )}
+
             <button
               type="button"
               onClick={onExportExcel}

@@ -6,6 +6,9 @@ export default defineConfig({
   dialect: "postgresql",
   schemaFilter: ["transport"],
   dbCredentials: {
-    url: process.env.DATABASE_URL || "postgresql://postgres:root1234@127.0.0.1:5432/postgres?schema=transport",
+    url:
+      process.env.DATABASE_URL ||
+      process.env.POSTGRES_URL ||
+      "postgresql://postgres:postgres@localhost:5432/transport_db",
   },
 });
