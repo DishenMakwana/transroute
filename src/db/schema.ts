@@ -1,3 +1,4 @@
+import "dotenv/config";
 import {
   pgSchema,
   text,
@@ -11,8 +12,8 @@ import {
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
-// Schema namespace: "transport"
-export const transportSchema = pgSchema("transport");
+// Schema namespace: dynamically configurable via DB_SCHEMA, defaults to "transport"
+export const transportSchema = pgSchema(process.env.DB_SCHEMA || "transport");
 
 export const transports = transportSchema.table(
   "transports",
