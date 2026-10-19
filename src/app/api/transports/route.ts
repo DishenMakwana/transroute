@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  searchTransports,
-  createTransport,
-  invalidateCache,
-} from "@/db/storage";
+import { searchTransports, createTransport } from "@/db/storage";
 import { SearchFilters, CreateTransportInput } from "@/types";
 
 export const dynamic = "force-dynamic";
@@ -11,13 +7,6 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-
-    const shouldRefresh =
-      searchParams.get("refresh") === "true" ||
-      searchParams.get("clearCache") === "true";
-    if (shouldRefresh) {
-      invalidateCache();
-    }
 
     const queryParam = searchParams.get("query") || searchParams.get("q");
 
@@ -46,7 +35,12 @@ export async function GET(request: NextRequest) {
     };
 
     const results = await searchTransports(filters);
-    return NextResponse.json(results);
+    return NextResponse.json(results, {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+        Pragma: "no-cache",
+      },
+    });
   } catch (error) {
     console.error("Failed to query transports:", error);
     return NextResponse.json(

@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  useState,
-  useEffect,
-  useCallback,
-  Suspense,
-  useMemo,
-  useRef,
-} from "react";
+import { useState, useEffect, useCallback, Suspense, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -18,6 +11,7 @@ import {
   Building2,
   Map as MapIcon,
 } from "lucide-react";
+import toast from "react-hot-toast";
 import Header from "@/components/Header";
 import SearchBar from "@/components/SearchBar";
 import FilterModal from "@/components/FilterModal";
@@ -40,8 +34,11 @@ import {
   VALID_BOX_SIZES,
   LocationSuggestion,
 } from "@/types";
-import toast from "react-hot-toast";
-import { getLocalCache, setLocalCache } from "@/helpers/cache";
+
+const searchClientCache = new Map<
+  string,
+  { data: SearchResult; timestamp: number }
+>();
 
 function HomePageContent() {
   const searchParams = useSearchParams();
@@ -234,9 +231,6 @@ function HomePageContent() {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
-  // Client-side query cache to make corridor switches and repeated searches 0ms instant
-  const queryCacheRef = useRef<Map<string, SearchResult>>(new Map());
-
   const fetchTransports = useCallback(async () => {
     const params = new URLSearchParams();
 
@@ -256,47 +250,40 @@ function HomePageContent() {
     if (filters.sortBy) params.append("sortBy", filters.sortBy);
 
     const queryString = params.toString();
-
-    // SWR / Local Storage cache hit: render immediately with zero network delay
-    const localHit = getLocalCache<SearchResult>(`search_${queryString}`);
-    if (localHit) {
-      setTransports(localHit.transports);
-      setTotalCount(localHit.totalCount);
-      if (localHit.availableCities && localHit.availableCities.length > 0) {
-        setAvailableCities(localHit.availableCities);
+    const cached = searchClientCache.get(queryString);
+    const now = Date.now();
+    if (cached && now - cached.timestamp < 30_000) {
+      setTransports(cached.data.transports);
+      setTotalCount(cached.data.totalCount);
+      if (
+        cached.data.availableCities &&
+        cached.data.availableCities.length > 0
+      ) {
+        setAvailableCities(cached.data.availableCities);
       }
       if (
-        localHit.availableLocations &&
-        localHit.availableLocations.length > 0
+        cached.data.availableLocations &&
+        cached.data.availableLocations.length > 0
       ) {
-        setAvailableLocations(localHit.availableLocations);
+        setAvailableLocations(cached.data.availableLocations);
       }
       setIsLoading(false);
-    } else if (queryCacheRef.current.has(queryString)) {
-      const cached = queryCacheRef.current.get(queryString)!;
-      setTransports(cached.transports);
-      setTotalCount(cached.totalCount);
-      if (cached.availableCities && cached.availableCities.length > 0) {
-        setAvailableCities(cached.availableCities);
-      }
-      if (cached.availableLocations && cached.availableLocations.length > 0) {
-        setAvailableLocations(cached.availableLocations);
-      }
-      setIsLoading(false);
-    } else {
-      setIsLoading(true);
+      return;
     }
 
+    setIsLoading(true);
+
     try {
-      const res = await fetch(`/api/transports?${queryString}`);
+      const res = await fetch(`/api/transports?${queryString}`, {
+        cache: "no-store",
+      });
       if (!res.ok) {
-        if (!localHit) toast.error("Failed to load transports");
+        toast.error("Failed to load transports");
         return;
       }
 
       const data = (await res.json()) as SearchResult;
-      queryCacheRef.current.set(queryString, data);
-      setLocalCache(`search_${queryString}`, data);
+      searchClientCache.set(queryString, { data, timestamp: Date.now() });
       setTransports(data.transports);
       setTotalCount(data.totalCount);
       if (data.availableCities && data.availableCities.length > 0) {
@@ -307,35 +294,35 @@ function HomePageContent() {
       }
     } catch (err) {
       console.error(err);
-      if (!localHit)
-        toast.error("Could not fetch transports. Please try again.");
+      toast.error("Could not fetch transports. Please try again.");
     } finally {
       setIsLoading(false);
     }
   }, [source, destination, filters]);
 
   const fetchAnalytics = useCallback(async () => {
-    const cachedAnalytics =
-      getLocalCache<AnalyticsSummary>("analytics_summary");
-    if (cachedAnalytics) {
-      setAnalytics(cachedAnalytics);
-    }
     try {
-      const res = await fetch("/api/analytics");
+      const res = await fetch("/api/analytics", {
+        cache: "no-store",
+      });
       if (res.ok) {
         const data = (await res.json()) as AnalyticsSummary;
         setAnalytics(data);
-        setLocalCache("analytics_summary", data);
       }
     } catch (err) {
       console.error("Failed to load analytics", err);
     }
   }, []);
 
-  // Concurrent parallel execution on mount and when query filters change
+  // Fetch analytics once on mount
   useEffect(() => {
-    Promise.all([fetchTransports(), fetchAnalytics()]);
-  }, [fetchTransports, fetchAnalytics]);
+    fetchAnalytics();
+  }, [fetchAnalytics]);
+
+  // Fetch transports when search/filters change
+  useEffect(() => {
+    fetchTransports();
+  }, [fetchTransports]);
 
   const handleSwap = () => {
     setSource(destination);
@@ -404,7 +391,7 @@ function HomePageContent() {
       throw new Error(err.error || "Save failed");
     }
 
-    queryCacheRef.current.clear();
+    searchClientCache.clear();
     await Promise.all([fetchTransports(), fetchAnalytics()]);
   };
 

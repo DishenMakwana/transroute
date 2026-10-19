@@ -4,14 +4,6 @@ import { ArrowLeftRight, X, SlidersHorizontal } from "lucide-react";
 import { SearchBarProps } from "@/types";
 import CitySearchInput from "./CitySearchInput";
 
-const POPULAR_CORRIDORS = [
-  { from: "Ahmedabad", to: "Mumbai" },
-  { from: "Pune", to: "Surat" },
-  { from: "Rajkot", to: "Gandhidham" },
-  { from: "New Delhi", to: "Ahmedabad" },
-  { from: "Vadodara", to: "Mumbai" },
-];
-
 export default function SearchBar({
   source,
   destination,
@@ -26,6 +18,25 @@ export default function SearchBar({
 }: SearchBarProps) {
   const hasActiveQuery = Boolean(source || destination);
 
+  const popularCorridors =
+    availableCities.length >= 2
+      ? [
+          { from: availableCities[0], to: availableCities[1] },
+          ...(availableCities.length >= 3
+            ? [{ from: availableCities[1], to: availableCities[2] }]
+            : []),
+          ...(availableCities.length >= 4
+            ? [{ from: availableCities[0], to: availableCities[2] }]
+            : []),
+          ...(availableCities.length >= 4
+            ? [{ from: availableCities[2], to: availableCities[3] }]
+            : []),
+          ...(availableCities.length >= 5
+            ? [{ from: availableCities[3], to: availableCities[4] }]
+            : []),
+        ]
+      : [];
+
   return (
     <div className="relative z-40 bg-zinc-900/90 rounded-2xl p-4 sm:p-4.5 border border-zinc-800/90 shadow-2xl backdrop-blur-sm">
       <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
@@ -35,7 +46,7 @@ export default function SearchBar({
           label="Dispatch Origin / Pickup City or PIN"
           value={source}
           onChange={onSourceChange}
-          placeholder="e.g. Ahmedabad, 382427, Aslali..."
+          placeholder="Search origin city, area or PIN code..."
           availableCities={availableCities}
           availableLocations={availableLocations}
           theme="orange"
@@ -59,7 +70,7 @@ export default function SearchBar({
           label="Delivery Destination / Dropoff Hub"
           value={destination}
           onChange={onDestinationChange}
-          placeholder="e.g. Mumbai, Bhiwandi, 400009..."
+          placeholder="Search destination city, area or PIN code..."
           availableCities={availableCities}
           availableLocations={availableLocations}
           theme="emerald"
@@ -82,31 +93,35 @@ export default function SearchBar({
 
       {/* Trade Corridor Shortcut Chips & Filter button on right */}
       <div className="mt-3.5 pt-3 border-t border-zinc-800/80 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
-            Popular Trade Corridors:
-          </span>
-          {POPULAR_CORRIDORS.map((c) => {
-            const isSelected = source === c.from && destination === c.to;
-            return (
-              <button
-                key={`${c.from}-${c.to}`}
-                type="button"
-                onClick={() => {
-                  onSourceChange(c.from);
-                  onDestinationChange(c.to);
-                }}
-                className={`text-xs px-2.5 py-1 rounded-lg border transition-all cursor-pointer font-medium ${
-                  isSelected
-                    ? "bg-orange-600 border-orange-500 text-white shadow-md shadow-orange-600/30"
-                    : "bg-zinc-950 border-zinc-800 text-zinc-300 hover:bg-zinc-800 hover:border-zinc-700 hover:text-zinc-100"
-                }`}
-              >
-                {c.from} <span className="text-zinc-500">→</span> {c.to}
-              </button>
-            );
-          })}
-        </div>
+        {popularCorridors.length > 0 ? (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
+              Popular Trade Corridors:
+            </span>
+            {popularCorridors.map((c) => {
+              const isSelected = source === c.from && destination === c.to;
+              return (
+                <button
+                  key={`${c.from}-${c.to}`}
+                  type="button"
+                  onClick={() => {
+                    onSourceChange(c.from);
+                    onDestinationChange(c.to);
+                  }}
+                  className={`text-xs px-2.5 py-1 rounded-lg border transition-all cursor-pointer font-medium ${
+                    isSelected
+                      ? "bg-orange-600 border-orange-500 text-white shadow-md shadow-orange-600/30"
+                      : "bg-zinc-950 border-zinc-800 text-zinc-300 hover:bg-zinc-800 hover:border-zinc-700 hover:text-zinc-100"
+                  }`}
+                >
+                  {c.from} <span className="text-zinc-500">→</span> {c.to}
+                </button>
+              );
+            })}
+          </div>
+        ) : (
+          <div />
+        )}
 
         {onOpenFilterModal && (
           <button

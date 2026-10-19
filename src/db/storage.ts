@@ -1,4 +1,4 @@
-import { db, pool } from "./db";
+import { db } from "./db";
 import { transports, transportLocations, transportPricing } from "./schema";
 import { eq } from "drizzle-orm";
 import {
@@ -16,149 +16,126 @@ import {
   CorridorBenchmark,
   LocationSuggestion,
 } from "@/types";
-import { initialTransportsData } from "./seed-data";
 import { checkIsOpenNow } from "@/helpers/formatters";
 
-// Fallback in-memory state with deep cloned seed data for zero-config local testing
-let inMemoryTransports: TransportWithDetails[] = initialTransportsData.map(
-  (t, tIdx) => {
-    const tId = t.id ?? tIdx + 1;
-    return {
-      id: tId,
-      name: t.name,
-      phoneNumber: t.phoneNumber,
-      gstNumber: t.gstNumber || null,
-      isVerified: t.isVerified ?? false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      locations: t.locations.map((loc, idx) => ({
-        id: idx + 1,
-        transportId: tId,
-        locationType: loc.locationType,
-        name: loc.name,
-        address: loc.address,
-        city: loc.city,
-        state: loc.state,
-        pinCode: loc.pinCode,
-        lat: loc.lat ?? null,
-        lng: loc.lng ?? null,
-        businessHoursStart: loc.businessHoursStart,
-        businessHoursEnd: loc.businessHoursEnd,
-        contactPhone: loc.contactPhone ?? null,
-      })),
-      pricing: t.pricing.map((p, idx) => ({
-        id: idx + 1,
-        transportId: tId,
-        pricingType: p.pricingType,
-        rate: p.rate,
-        unit: p.unit,
-        notes: p.notes ?? null,
-      })),
-    };
-  }
-);
-
-let isDbAvailable: boolean | null = null;
-
-async function checkDbConnection(): Promise<boolean> {
-  if (isDbAvailable !== null) return isDbAvailable;
-  try {
-    const client = await pool.connect();
-    client.release();
-    isDbAvailable = true;
-    return true;
-  } catch {
-    isDbAvailable = false;
-    return false;
-  }
-}
-
-// In-memory cache for ultra-fast sub-millisecond response times
 interface CacheEntry<T> {
   data: T;
-  timestamp: number;
+  expiresAt: number;
 }
 
-let cachedTransports: CacheEntry<TransportWithDetails[]> | null = null;
-let cachedAnalytics: CacheEntry<AnalyticsSummary> | null = null;
-const CACHE_TTL_MS = 60 * 1000; // 60 seconds TTL
+let transportsCache: CacheEntry<TransportWithDetails[]> | null = null;
+let analyticsCache: CacheEntry<AnalyticsSummary> | null = null;
 
-export function invalidateCache(): void {
-  cachedTransports = null;
-  cachedAnalytics = null;
+function invalidateStorageCache(): void {
+  transportsCache = null;
+  analyticsCache = null;
 }
 
-export async function getAllTransportsWithDetails(
-  bypassCache = false
-): Promise<TransportWithDetails[]> {
-  if (bypassCache) {
-    invalidateCache();
-  }
+export async function getAllTransportsWithDetails(): Promise<
+  TransportWithDetails[]
+> {
   const now = Date.now();
-  if (
-    !bypassCache &&
-    cachedTransports &&
-    now - cachedTransports.timestamp < CACHE_TTL_MS
-  ) {
-    return cachedTransports.data;
+  if (transportsCache && transportsCache.expiresAt > now) {
+    return transportsCache.data;
   }
 
-  const hasDb = await checkDbConnection();
+  // Zero sequential awaits: run parallel database queries
+  const [transportsList, allLocations, allPricing] = await Promise.all([
+    db.select().from(transports),
+    db.select().from(transportLocations),
+    db.select().from(transportPricing),
+  ]);
 
-  if (hasDb) {
-    // Zero sequential awaits: run parallel database queries
-    const [transportsList, allLocations, allPricing] = await Promise.all([
-      db.select().from(transports),
-      db.select().from(transportLocations),
-      db.select().from(transportPricing),
-    ]);
+  const result: TransportWithDetails[] = transportsList.map((t) => {
+    const locations = allLocations.filter((loc) => loc.transportId === t.id);
+    const pricing = allPricing.filter((prc) => prc.transportId === t.id);
 
-    const mapped = transportsList.map((t) => {
-      const locations = allLocations.filter((loc) => loc.transportId === t.id);
-      const pricing = allPricing.filter((prc) => prc.transportId === t.id);
-
-      const isOpenNow = locations.some((loc) =>
-        checkIsOpenNow(loc.businessHoursStart, loc.businessHoursEnd)
-      );
-
-      return {
-        id: t.id,
-        name: t.name,
-        phoneNumber: t.phoneNumber,
-        gstNumber: t.gstNumber,
-        isVerified: t.isVerified,
-        createdAt: t.createdAt,
-        updatedAt: t.updatedAt,
-        locations: locations.map((loc) => ({
-          ...loc,
-          locationType:
-            loc.locationType as TransportWithDetails["locations"][number]["locationType"],
-        })),
-        pricing: pricing.map((prc) => ({
-          ...prc,
-          rate: Number(prc.rate),
-          pricingType:
-            prc.pricingType as TransportWithDetails["pricing"][number]["pricingType"],
-          unit: prc.unit as TransportWithDetails["pricing"][number]["unit"],
-        })),
-        isOpenNow,
-      };
-    });
-
-    cachedTransports = { data: mapped, timestamp: now };
-    return mapped;
-  }
-
-  // Fallback to in-memory store
-  const fallbackMapped = inMemoryTransports.map((t) => ({
-    ...t,
-    isOpenNow: t.locations.some((loc) =>
+    const isOpenNow = locations.some((loc) =>
       checkIsOpenNow(loc.businessHoursStart, loc.businessHoursEnd)
-    ),
-  }));
+    );
 
-  cachedTransports = { data: fallbackMapped, timestamp: now };
-  return fallbackMapped;
+    return {
+      id: t.id,
+      name: t.name,
+      phoneNumber: t.phoneNumber,
+      gstNumber: t.gstNumber,
+      isVerified: t.isVerified,
+      createdAt: t.createdAt,
+      updatedAt: t.updatedAt,
+      locations: locations.map((loc) => ({
+        ...loc,
+        locationType:
+          loc.locationType as TransportWithDetails["locations"][number]["locationType"],
+      })),
+      pricing: pricing.map((prc) => ({
+        ...prc,
+        rate: Number(prc.rate),
+        pricingType:
+          prc.pricingType as TransportWithDetails["pricing"][number]["pricingType"],
+        unit: prc.unit as TransportWithDetails["pricing"][number]["unit"],
+      })),
+      isOpenNow,
+    };
+  });
+
+  transportsCache = {
+    data: result,
+    expiresAt: now + 60_000,
+  };
+
+  return result;
+}
+
+export async function getTransportById(
+  id: number
+): Promise<TransportWithDetails | null> {
+  // If cache is fresh, look up in-memory directly (<1ms)
+  if (transportsCache && transportsCache.expiresAt > Date.now()) {
+    return transportsCache.data.find((t) => t.id === id) || null;
+  }
+
+  // Otherwise run parallel queries for specific transport
+  const [transportList, locations, pricing] = await Promise.all([
+    db.select().from(transports).where(eq(transports.id, id)),
+    db
+      .select()
+      .from(transportLocations)
+      .where(eq(transportLocations.transportId, id)),
+    db
+      .select()
+      .from(transportPricing)
+      .where(eq(transportPricing.transportId, id)),
+  ]);
+
+  if (transportList.length === 0) return null;
+  const t = transportList[0];
+
+  const isOpenNow = locations.some((loc) =>
+    checkIsOpenNow(loc.businessHoursStart, loc.businessHoursEnd)
+  );
+
+  return {
+    id: t.id,
+    name: t.name,
+    phoneNumber: t.phoneNumber,
+    gstNumber: t.gstNumber,
+    isVerified: t.isVerified,
+    createdAt: t.createdAt,
+    updatedAt: t.updatedAt,
+    locations: locations.map((loc) => ({
+      ...loc,
+      locationType:
+        loc.locationType as TransportWithDetails["locations"][number]["locationType"],
+    })),
+    pricing: pricing.map((prc) => ({
+      ...prc,
+      rate: Number(prc.rate),
+      pricingType:
+        prc.pricingType as TransportWithDetails["pricing"][number]["pricingType"],
+      unit: prc.unit as TransportWithDetails["pricing"][number]["unit"],
+    })),
+    isOpenNow,
+  };
 }
 
 export async function searchTransports(
@@ -329,13 +306,17 @@ export async function searchTransports(
         const cleanPin = loc.pinCode.trim();
         if (cleanPin && !pinMap.has(cleanPin)) {
           // Extract meaningful area label
-          const area =
-            loc.name
-              .replace(
-                /^(Ahmedabad|Mumbai|Pune|Surat|Rajkot|Vadodara|Delhi|New Delhi|Jaipur|Indore|Bhuj|Gandhidham)\s+/i,
-                ""
+          const cityPrefixRegex = loc.city
+            ? new RegExp(
+                `^${loc.city.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")}\\s+`,
+                "i"
               )
-              .trim() || loc.city;
+            : null;
+          const area =
+            (cityPrefixRegex
+              ? loc.name.replace(cityPrefixRegex, "")
+              : loc.name
+            ).trim() || loc.city;
           pinMap.set(cleanPin, {
             city: loc.city,
             state: loc.state || "",
@@ -390,273 +371,221 @@ export async function searchTransports(
 export async function createTransport(
   input: CreateTransportInput
 ): Promise<TransportWithDetails> {
-  const hasDb = await checkDbConnection();
+  const result = await db.transaction(async (tx) => {
+    const [inserted] = await tx
+      .insert(transports)
+      .values({
+        name: input.name,
+        phoneNumber: input.phoneNumber,
+        gstNumber: input.gstNumber || null,
+        isVerified: input.isVerified ?? false,
+      })
+      .returning();
 
-  let assignedId: number;
+    // Parallelize relational inserts via Promise.all
+    const [insertedLocations, insertedPricing] = await Promise.all([
+      input.locations && input.locations.length > 0
+        ? tx
+            .insert(transportLocations)
+            .values(
+              input.locations.map((loc) => ({
+                transportId: inserted.id,
+                locationType: loc.locationType,
+                name: loc.name,
+                address: loc.address,
+                city: loc.city,
+                state: loc.state,
+                pinCode: loc.pinCode,
+                lat: loc.lat ?? null,
+                lng: loc.lng ?? null,
+                businessHoursStart: loc.businessHoursStart,
+                businessHoursEnd: loc.businessHoursEnd,
+                contactPhone: loc.contactPhone ?? null,
+              }))
+            )
+            .returning()
+        : Promise.resolve([]),
+      input.pricing && input.pricing.length > 0
+        ? tx
+            .insert(transportPricing)
+            .values(
+              input.pricing.map((prc) => ({
+                transportId: inserted.id,
+                pricingType: prc.pricingType,
+                rate: prc.rate.toString(),
+                unit: prc.unit,
+                notes: prc.notes ?? null,
+              }))
+            )
+            .returning()
+        : Promise.resolve([]),
+    ]);
 
-  if (hasDb) {
-    await db.transaction(async (tx) => {
-      const [inserted] = await tx
-        .insert(transports)
-        .values({
-          name: input.name,
-          phoneNumber: input.phoneNumber,
-          gstNumber: input.gstNumber || null,
-          isVerified: input.isVerified ?? false,
-        })
-        .returning({ id: transports.id });
-
-      assignedId = inserted.id;
-
-      // Parallel database inserts using Promise.all
-      const insertTasks: Promise<unknown>[] = [];
-
-      if (input.locations && input.locations.length > 0) {
-        insertTasks.push(
-          tx.insert(transportLocations).values(
-            input.locations.map((loc) => ({
-              transportId: assignedId,
-              locationType: loc.locationType,
-              name: loc.name,
-              address: loc.address,
-              city: loc.city,
-              state: loc.state,
-              pinCode: loc.pinCode,
-              lat: loc.lat ?? null,
-              lng: loc.lng ?? null,
-              businessHoursStart: loc.businessHoursStart,
-              businessHoursEnd: loc.businessHoursEnd,
-              contactPhone: loc.contactPhone ?? null,
-            }))
-          )
-        );
-      }
-
-      if (input.pricing && input.pricing.length > 0) {
-        insertTasks.push(
-          tx.insert(transportPricing).values(
-            input.pricing.map((prc) => ({
-              transportId: assignedId,
-              pricingType: prc.pricingType,
-              rate: prc.rate.toString(),
-              unit: prc.unit,
-              notes: prc.notes ?? null,
-            }))
-          )
-        );
-      }
-
-      if (insertTasks.length > 0) {
-        await Promise.all(insertTasks);
-      }
-    });
-  } else {
-    assignedId = (inMemoryTransports[0]?.id ?? 0) + 1;
-  }
-
-  const newTransport: TransportWithDetails = {
-    id: assignedId!,
-    name: input.name,
-    phoneNumber: input.phoneNumber,
-    gstNumber: input.gstNumber || null,
-    isVerified: input.isVerified ?? false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    locations: input.locations.map((loc, idx) => ({
-      id: idx + 1,
-      transportId: assignedId!,
-      locationType: loc.locationType,
-      name: loc.name,
-      address: loc.address,
-      city: loc.city,
-      state: loc.state,
-      pinCode: loc.pinCode,
-      lat: loc.lat ?? null,
-      lng: loc.lng ?? null,
-      businessHoursStart: loc.businessHoursStart,
-      businessHoursEnd: loc.businessHoursEnd,
-      contactPhone: loc.contactPhone ?? null,
-    })),
-    pricing: input.pricing.map((p, idx) => ({
-      id: idx + 1,
-      transportId: assignedId!,
-      pricingType: p.pricingType,
-      rate: Number(p.rate),
-      unit: p.unit,
-      notes: p.notes ?? null,
-    })),
-    isOpenNow: input.locations.some((loc) =>
+    const isOpenNow = insertedLocations.some((loc) =>
       checkIsOpenNow(loc.businessHoursStart, loc.businessHoursEnd)
-    ),
-  };
+    );
 
-  // Always keep in-memory sync
-  inMemoryTransports.unshift(newTransport);
-  invalidateCache();
-  return newTransport;
+    return {
+      id: inserted.id,
+      name: inserted.name,
+      phoneNumber: inserted.phoneNumber,
+      gstNumber: inserted.gstNumber,
+      isVerified: inserted.isVerified,
+      createdAt: inserted.createdAt,
+      updatedAt: inserted.updatedAt,
+      locations: insertedLocations.map((loc) => ({
+        ...loc,
+        locationType:
+          loc.locationType as TransportWithDetails["locations"][number]["locationType"],
+      })),
+      pricing: insertedPricing.map((prc) => ({
+        ...prc,
+        rate: Number(prc.rate),
+        pricingType:
+          prc.pricingType as TransportWithDetails["pricing"][number]["pricingType"],
+        unit: prc.unit as TransportWithDetails["pricing"][number]["unit"],
+      })),
+      isOpenNow,
+    };
+  });
+
+  invalidateStorageCache();
+  return result;
 }
 
 export async function updateTransport(
   id: number,
   input: UpdateTransportInput
 ): Promise<TransportWithDetails | null> {
-  const hasDb = await checkDbConnection();
+  const result = await db.transaction(async (tx) => {
+    const [updated] = await tx
+      .update(transports)
+      .set({
+        name: input.name,
+        phoneNumber: input.phoneNumber,
+        gstNumber: input.gstNumber,
+        isVerified: input.isVerified,
+        updatedAt: new Date(),
+      })
+      .where(eq(transports.id, id))
+      .returning();
 
-  if (hasDb) {
-    await db.transaction(async (tx) => {
-      await tx
-        .update(transports)
-        .set({
-          name: input.name,
-          phoneNumber: input.phoneNumber,
-          gstNumber: input.gstNumber,
-          isVerified: input.isVerified,
-          updatedAt: new Date(),
-        })
-        .where(eq(transports.id, id));
+    if (!updated) return null;
 
-      // Parallel cleanup of existing relations
-      const deleteTasks: Promise<unknown>[] = [];
-      if (input.locations) {
-        deleteTasks.push(
-          tx
+    // Parallelize locations and pricing updates
+    await Promise.all([
+      (async () => {
+        if (input.locations) {
+          await tx
             .delete(transportLocations)
-            .where(eq(transportLocations.transportId, id))
-        );
-      }
-      if (input.pricing) {
-        deleteTasks.push(
-          tx
+            .where(eq(transportLocations.transportId, id));
+
+          if (input.locations.length > 0) {
+            await tx.insert(transportLocations).values(
+              input.locations.map((loc) => ({
+                transportId: id,
+                locationType: loc.locationType,
+                name: loc.name,
+                address: loc.address,
+                city: loc.city,
+                state: loc.state,
+                pinCode: loc.pinCode,
+                lat: loc.lat ?? null,
+                lng: loc.lng ?? null,
+                businessHoursStart: loc.businessHoursStart,
+                businessHoursEnd: loc.businessHoursEnd,
+                contactPhone: loc.contactPhone ?? null,
+              }))
+            );
+          }
+        }
+      })(),
+      (async () => {
+        if (input.pricing) {
+          await tx
             .delete(transportPricing)
-            .where(eq(transportPricing.transportId, id))
-        );
-      }
-      if (deleteTasks.length > 0) {
-        await Promise.all(deleteTasks);
-      }
+            .where(eq(transportPricing.transportId, id));
 
-      // Parallel insertion of updated relations
-      const insertTasks: Promise<unknown>[] = [];
-      if (input.locations && input.locations.length > 0) {
-        insertTasks.push(
-          tx.insert(transportLocations).values(
-            input.locations.map((loc) => ({
-              transportId: id,
-              locationType: loc.locationType,
-              name: loc.name,
-              address: loc.address,
-              city: loc.city,
-              state: loc.state,
-              pinCode: loc.pinCode,
-              lat: loc.lat ?? null,
-              lng: loc.lng ?? null,
-              businessHoursStart: loc.businessHoursStart,
-              businessHoursEnd: loc.businessHoursEnd,
-              contactPhone: loc.contactPhone ?? null,
-            }))
-          )
-        );
-      }
+          if (input.pricing.length > 0) {
+            await tx.insert(transportPricing).values(
+              input.pricing.map((prc) => ({
+                transportId: id,
+                pricingType: prc.pricingType,
+                rate: prc.rate.toString(),
+                unit: prc.unit,
+                notes: prc.notes ?? null,
+              }))
+            );
+          }
+        }
+      })(),
+    ]);
 
-      if (input.pricing && input.pricing.length > 0) {
-        insertTasks.push(
-          tx.insert(transportPricing).values(
-            input.pricing.map((prc) => ({
-              transportId: id,
-              pricingType: prc.pricingType,
-              rate: prc.rate.toString(),
-              unit: prc.unit,
-              notes: prc.notes ?? null,
-            }))
-          )
-        );
-      }
+    // Fetch fresh relations in parallel
+    const [locations, pricing] = await Promise.all([
+      tx
+        .select()
+        .from(transportLocations)
+        .where(eq(transportLocations.transportId, id)),
+      tx
+        .select()
+        .from(transportPricing)
+        .where(eq(transportPricing.transportId, id)),
+    ]);
 
-      if (insertTasks.length > 0) {
-        await Promise.all(insertTasks);
-      }
-    });
+    const isOpenNow = locations.some((loc) =>
+      checkIsOpenNow(loc.businessHoursStart, loc.businessHoursEnd)
+    );
+
+    return {
+      id: updated.id,
+      name: updated.name,
+      phoneNumber: updated.phoneNumber,
+      gstNumber: updated.gstNumber,
+      isVerified: updated.isVerified,
+      createdAt: updated.createdAt,
+      updatedAt: updated.updatedAt,
+      locations: locations.map((loc) => ({
+        ...loc,
+        locationType:
+          loc.locationType as TransportWithDetails["locations"][number]["locationType"],
+      })),
+      pricing: pricing.map((prc) => ({
+        ...prc,
+        rate: Number(prc.rate),
+        pricingType:
+          prc.pricingType as TransportWithDetails["pricing"][number]["pricingType"],
+        unit: prc.unit as TransportWithDetails["pricing"][number]["unit"],
+      })),
+      isOpenNow,
+    };
+  });
+
+  if (result) {
+    invalidateStorageCache();
   }
-
-  const existingIdx = inMemoryTransports.findIndex((t) => t.id === id);
-  if (existingIdx === -1) {
-    const all = await getAllTransportsWithDetails();
-    invalidateCache();
-    return all.find((t) => t.id === id) || null;
-  }
-
-  const existing = inMemoryTransports[existingIdx];
-
-  const updated: TransportWithDetails = {
-    ...existing,
-    name: input.name ?? existing.name,
-    phoneNumber: input.phoneNumber ?? existing.phoneNumber,
-    gstNumber:
-      input.gstNumber !== undefined ? input.gstNumber : existing.gstNumber,
-    isVerified: input.isVerified ?? existing.isVerified,
-    updatedAt: new Date(),
-    locations: input.locations
-      ? input.locations.map((loc, idx) => ({
-          id: idx + 1,
-          transportId: id,
-          locationType: loc.locationType,
-          name: loc.name,
-          address: loc.address,
-          city: loc.city,
-          state: loc.state,
-          pinCode: loc.pinCode,
-          lat: loc.lat ?? null,
-          lng: loc.lng ?? null,
-          businessHoursStart: loc.businessHoursStart,
-          businessHoursEnd: loc.businessHoursEnd,
-          contactPhone: loc.contactPhone ?? null,
-        }))
-      : existing.locations,
-    pricing: input.pricing
-      ? input.pricing.map((p, idx) => ({
-          id: idx + 1,
-          transportId: id,
-          pricingType: p.pricingType,
-          rate: Number(p.rate),
-          unit: p.unit,
-          notes: p.notes ?? null,
-        }))
-      : existing.pricing,
-  };
-
-  inMemoryTransports[existingIdx] = updated;
-  invalidateCache();
-  return updated;
+  return result;
 }
 
 export async function deleteTransport(id: number): Promise<boolean> {
-  const hasDb = await checkDbConnection();
-
-  if (hasDb) {
-    await db.delete(transports).where(eq(transports.id, id));
+  const deleted = await db
+    .delete(transports)
+    .where(eq(transports.id, id))
+    .returning({ id: transports.id });
+  const success = deleted.length > 0;
+  if (success) {
+    invalidateStorageCache();
   }
-
-  inMemoryTransports = inMemoryTransports.filter((t) => t.id !== id);
-  invalidateCache();
-  return true;
+  return success;
 }
 
-export async function getAnalytics(
-  bypassCache = false
-): Promise<AnalyticsSummary> {
-  if (bypassCache) {
-    invalidateCache();
-  }
+export async function getAnalytics(): Promise<AnalyticsSummary> {
   const now = Date.now();
-  if (
-    !bypassCache &&
-    cachedAnalytics &&
-    now - cachedAnalytics.timestamp < CACHE_TTL_MS
-  ) {
-    return cachedAnalytics.data;
+  if (analyticsCache && analyticsCache.expiresAt > now) {
+    return analyticsCache.data;
   }
 
-  const all = await getAllTransportsWithDetails(bypassCache);
+  const all = await getAllTransportsWithDetails();
 
   // Aggregate rates by unit
   const unitMap: Record<string, number[]> = {};
@@ -789,61 +718,39 @@ export async function getAnalytics(
       };
     });
 
-  // Interstate trade corridor benchmarks
-  const definedCorridors = [
-    {
-      corridor: "Delhi NCR ⇄ Mumbai MMR",
-      origin: "Delhi NCR",
-      destination: "Mumbai",
-      originMatch: ["delhi", "new delhi", "noida", "gurugram", "faridabad"],
-      destMatch: ["mumbai", "navi mumbai", "thane", "bhiwandi"],
-    },
-    {
-      corridor: "Mumbai MMR ⇄ Bengaluru",
-      origin: "Mumbai",
-      destination: "Bengaluru",
-      originMatch: ["mumbai", "pune", "thane", "bhiwandi"],
-      destMatch: ["bengaluru", "bangalore", "hosur"],
-    },
-    {
-      corridor: "Ahmedabad ⇄ Surat (Gujarat Line)",
-      origin: "Ahmedabad",
-      destination: "Surat",
-      originMatch: ["ahmedabad", "gandhinagar"],
-      destMatch: ["surat", "vadodara", "ankleshwar"],
-    },
-    {
-      corridor: "Bengaluru ⇄ Chennai (South Express)",
-      origin: "Bengaluru",
-      destination: "Chennai",
-      originMatch: ["bengaluru", "bangalore"],
-      destMatch: ["chennai", "sriperumbudur"],
-    },
-    {
-      corridor: "Delhi NCR ⇄ Kolkata (East-West Trunk)",
-      origin: "Delhi NCR",
-      destination: "Kolkata",
-      originMatch: ["delhi", "new delhi", "noida"],
-      destMatch: ["kolkata", "howrah"],
-    },
-    {
-      corridor: "Mumbai ⇄ Hyderabad",
-      origin: "Mumbai",
-      destination: "Hyderabad",
-      originMatch: ["mumbai", "pune"],
-      destMatch: ["hyderabad", "secunderabad"],
-    },
-  ];
+  // Interstate trade corridor benchmarks derived dynamically from top cities
+  const dynamicCorridors: {
+    corridor: string;
+    origin: string;
+    destination: string;
+  }[] = [];
 
-  const corridorBenchmarks: CorridorBenchmark[] = definedCorridors.map((c) => {
+  if (topCities.length >= 2) {
+    for (let i = 0; i < topCities.length && dynamicCorridors.length < 6; i++) {
+      for (
+        let j = i + 1;
+        j < topCities.length && dynamicCorridors.length < 6;
+        j++
+      ) {
+        const originCity = topCities[i].city;
+        const destCity = topCities[j].city;
+        dynamicCorridors.push({
+          corridor: `${originCity} ⇄ ${destCity}`,
+          origin: originCity,
+          destination: destCity,
+        });
+      }
+    }
+  }
+
+  const corridorBenchmarks: CorridorBenchmark[] = dynamicCorridors.map((c) => {
+    const originLower = c.origin.toLowerCase();
+    const destLower = c.destination.toLowerCase();
+
     const matchingTransporters = all.filter((t) => {
       const cities = t.locations.map((loc) => loc.city.toLowerCase());
-      const hasOrigin = c.originMatch.some((om) =>
-        cities.some((city) => city.includes(om))
-      );
-      const hasDest = c.destMatch.some((dm) =>
-        cities.some((city) => city.includes(dm))
-      );
+      const hasOrigin = cities.some((city) => city.includes(originLower));
+      const hasDest = cities.some((city) => city.includes(destLower));
       return hasOrigin || hasDest;
     });
 
@@ -856,14 +763,14 @@ export async function getAnalytics(
       .map((t) => t.pricing.find((p) => p.unit === "medium_box")?.rate)
       .filter((r): r is number => r !== undefined && r > 0);
 
-    const minPerKg = kgRates.length > 0 ? Math.min(...kgRates) : 8;
+    const minPerKg = kgRates.length > 0 ? Math.min(...kgRates) : 0;
     const avgPerKg =
       kgRates.length > 0
         ? Number(
             (kgRates.reduce((a, b) => a + b, 0) / kgRates.length).toFixed(1)
           )
-        : 14;
-    const minBoxRate = boxRates.length > 0 ? Math.min(...boxRates) : 250;
+        : 0;
+    const minBoxRate = boxRates.length > 0 ? Math.min(...boxRates) : 0;
 
     return {
       corridor: c.corridor,
@@ -889,6 +796,10 @@ export async function getAnalytics(
     corridorBenchmarks,
   };
 
-  cachedAnalytics = { data: summary, timestamp: now };
+  analyticsCache = {
+    data: summary,
+    expiresAt: now + 60_000,
+  };
+
   return summary;
 }

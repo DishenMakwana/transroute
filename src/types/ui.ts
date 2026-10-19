@@ -110,6 +110,8 @@ export interface TransportModalProps {
 export type FacilityTabFilter =
   "all" | "office" | "godown" | "pickup_and_dropoff";
 
+export type TransportCardLocationTab = "all" | "offices" | "godowns";
+
 export interface FreightEstimatorState {
   unit: string;
   quantity: number;

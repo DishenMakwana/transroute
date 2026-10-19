@@ -4,7 +4,18 @@ import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://transroute.in";
+const getBaseUrl = (): string => {
+  if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL;
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  return "https://transroutes.vercel.app";
+};
+
+const BASE_URL = getBaseUrl();
 
 export const viewport: Viewport = {
   themeColor: [
@@ -22,15 +33,15 @@ export const metadata: Metadata = {
     template: "%s | TransRoute",
   },
   description:
-    "Search and filter road freight operators, LTL parcel booking offices, and carton dispatch godowns across India for product box shipping.",
+    "Search, filter, and compare verified road transport operators, LTL booking offices, and carton dispatch godowns across India with live rates.",
   keywords: [
     "Indian transport directory",
     "LTL parcel freight India",
     "carton transport godowns",
     "box cargo shipping rates",
-    "road freight operators Gujarat Maharashtra",
-    "Aslali transport Nagar",
-    "Bhiwandi logistics hub",
+    "intercity road freight operators",
+    "transport nagar parcel hubs",
+    "commercial logistics directory",
     "parcel booking office phone numbers",
     "bilty LR transport India",
   ],
@@ -44,6 +55,33 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    url: BASE_URL,
+    siteName: "TransRoute",
+    title: "TransRoute - Indian Box & Product Cargo Transport Finder",
+    description:
+      "Search, filter, and compare verified road transport operators, LTL booking offices, and carton dispatch godowns across India with live rates.",
+    images: [
+      {
+        url: `${BASE_URL}/opengraph-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "TransRoute - Indian Box & Product Cargo Transport Finder",
+        type: "image/png",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TransRoute - Indian Box & Product Cargo Transport Finder",
+    description:
+      "Search, filter, and compare verified road transport operators, LTL booking offices, and carton dispatch godowns across India with live rates.",
+    images: [`${BASE_URL}/opengraph-image.png`],
+    creator: "@transroute_in",
+    site: "@transroute_in",
   },
   icons: {
     icon: [
@@ -108,7 +146,7 @@ const jsonLdWebsite = {
       contactPoint: {
         "@type": "ContactPoint",
         contactType: "customer support",
-        availableLanguage: ["English", "Hindi", "Gujarati"],
+        availableLanguage: ["English", "Hindi"],
       },
     },
     {
@@ -144,7 +182,7 @@ const jsonLdWebsite = {
           name: "How do I find open transport booking offices near me?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "TransRoute tracks real-time Indian Standard Time (IST) operational hours for parcel booking offices and godowns across major transport nagars including Aslali (Ahmedabad), Bhiwandi (Mumbai), Sanjay Gandhi Transport Nagar (Delhi), and Ring Road (Surat).",
+            text: "TransRoute tracks real-time Indian Standard Time (IST) operational hours for parcel booking offices and godowns across registered commercial transport nagars and logistics hubs.",
           },
         },
       ],
@@ -163,6 +201,43 @@ export default function RootLayout({
       className={`dark ${GeistSans.variable} ${GeistMono.variable}`}
     >
       <head>
+        <meta
+          property="og:title"
+          content="TransRoute - Indian Box & Product Cargo Transport Finder"
+        />
+        <meta
+          property="og:description"
+          content="Search, filter, and compare verified road transport operators, LTL booking offices, and carton dispatch godowns across India with live rates."
+        />
+        <meta property="og:image" content={`${BASE_URL}/opengraph-image.png`} />
+        <meta
+          property="og:image:secure_url"
+          content={`${BASE_URL}/opengraph-image.png`}
+        />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:type" content="image/png" />
+        <meta
+          property="og:image:alt"
+          content="TransRoute - Indian Box & Product Cargo Transport Finder"
+        />
+        <meta property="og:url" content={BASE_URL} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="TransRoute" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content="TransRoute - Indian Box & Product Cargo Transport Finder"
+        />
+        <meta
+          name="twitter:description"
+          content="Search, filter, and compare verified road transport operators, LTL booking offices, and carton dispatch godowns across India with live rates."
+        />
+        <meta
+          name="twitter:image"
+          content={`${BASE_URL}/opengraph-image.png`}
+        />
+        <link rel="image_src" href={`${BASE_URL}/opengraph-image.png`} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebsite) }}

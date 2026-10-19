@@ -19,15 +19,17 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import { TransportLocation, TransportCardProps } from "@/types";
+import {
+  TransportLocation,
+  TransportCardProps,
+  TransportCardLocationTab,
+} from "@/types";
 import { formatCurrency, formatPinCode } from "@/helpers/formatters";
 
 export default function TransportCard({ transport }: TransportCardProps) {
   const router = useRouter();
   const [showAllLocations, setShowAllLocations] = useState(false);
-  const [activeTab, setActiveTab] = useState<"all" | "offices" | "godowns">(
-    "all"
-  );
+  const [activeTab, setActiveTab] = useState<TransportCardLocationTab>("all");
 
   const isLocationDestinationMatch = (loc: TransportLocation) => {
     if (

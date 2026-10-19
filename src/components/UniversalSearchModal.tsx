@@ -222,8 +222,7 @@ export default function UniversalSearchModal({
               </h4>
               <p className="text-xs text-zinc-500 max-w-sm mx-auto">
                 No transport operator matches "{query}" under scope "{scope}".
-                Try searching by city (e.g., Pune, Ahmedabad) or numeric PIN
-                code.
+                Try searching by city name, operator name, or numeric PIN code.
               </p>
             </div>
           ) : (

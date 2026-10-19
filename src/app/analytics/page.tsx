@@ -34,6 +34,8 @@ import {
   Activity,
   ArrowUpRight,
 } from "lucide-react";
+import toast from "react-hot-toast";
+import CustomDropdown from "@/components/CustomDropdown";
 import {
   AnalyticsSummary,
   AnalyticsFilterState,
@@ -41,9 +43,6 @@ import {
   CustomTooltipProps,
   DropdownOption,
 } from "@/types";
-import toast from "react-hot-toast";
-import CustomDropdown from "@/components/CustomDropdown";
-import { getLocalCache, setLocalCache, clearLocalCache } from "@/helpers/cache";
 
 // Recharts theme colors tailored for high-contrast dark theme
 const PIE_COLORS = [
@@ -154,25 +153,19 @@ export default function AnalyticsPage() {
   });
 
   const fetchAnalytics = useCallback(async () => {
-    const cached = getLocalCache<AnalyticsSummary>("analytics_summary");
-    if (cached) {
-      setAnalytics(cached);
-      setIsLoading(false);
-    } else {
-      setIsLoading(true);
-    }
+    setIsLoading(true);
 
     try {
-      const res = await fetch("/api/analytics");
+      const res = await fetch("/api/analytics", {
+        cache: "no-store",
+      });
       if (!res.ok) {
-        if (!cached) throw new Error("Failed to load analytics");
-        return;
+        throw new Error("Failed to load analytics");
       }
       const data: AnalyticsSummary = await res.json();
       setAnalytics(data);
-      setLocalCache("analytics_summary", data);
     } catch {
-      if (!cached) toast.error("Failed to load analytics data");
+      toast.error("Failed to load analytics data");
     } finally {
       setIsLoading(false);
     }
@@ -181,12 +174,10 @@ export default function AnalyticsPage() {
   const handleManualRefresh = async () => {
     if (isRefreshing) return;
     setIsRefreshing(true);
-    clearLocalCache("analytics_summary");
 
     const refreshOperation = (async () => {
-      const url = `/api/analytics?refresh=true&_t=${Date.now()}`;
       const [res] = await Promise.all([
-        fetch(url, {
+        fetch("/api/analytics", {
           cache: "no-store",
           headers: { "Cache-Control": "no-cache, no-store" },
         }),
@@ -197,15 +188,14 @@ export default function AnalyticsPage() {
       if (!res.ok) throw new Error("Failed to load analytics");
       const data: AnalyticsSummary = await res.json();
       setAnalytics(data);
-      setLocalCache("analytics_summary", data);
       return data;
     })();
 
     toast.promise(
       refreshOperation,
       {
-        loading: "Clearing cache & recalculating logistics metrics...",
-        success: "Cache cleared & analytics data refreshed!",
+        loading: "Recalculating logistics metrics from database...",
+        success: "Analytics metrics refreshed from database!",
         error: "Failed to refresh analytics data",
       },
       {
@@ -521,16 +511,25 @@ export default function AnalyticsPage() {
           />
           <KpiCard
             title="Median Tariff"
-            value="₹12.50"
-            subtext="Per kg baseline freight"
+            value={
+              analytics?.rateDistributions?.find((r) => r.unit === "kg")
+                ?.avgRate
+                ? `₹${analytics.rateDistributions.find((r) => r.unit === "kg")!.avgRate.toFixed(2)}`
+                : "—"
+            }
+            subtext="Per kg average freight"
             icon={<DollarSign className="h-5 w-5" />}
             badge="Standard LTL"
             accentColor="amber"
           />
           <KpiCard
             title="Top Corridor"
-            value="NCR ⇄ MMR"
-            subtext="Delhi to Mumbai trunk"
+            value={analytics?.corridorBenchmarks?.[0]?.corridor || "—"}
+            subtext={
+              analytics?.corridorBenchmarks?.[0]
+                ? `${analytics.corridorBenchmarks[0].origin} to ${analytics.corridorBenchmarks[0].destination}`
+                : "Dynamic lane benchmark"
+            }
             icon={<Activity className="h-5 w-5" />}
             badge="Highest Density"
             accentColor="cyan"

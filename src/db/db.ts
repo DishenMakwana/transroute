@@ -15,10 +15,12 @@ let pool: pg.Pool;
 let db: NodePgDatabase<typeof schema>;
 
 // Support both standard DATABASE_URL and Vercel Postgres POSTGRES_URL
-const connectionString =
+const rawConnectionString =
   process.env.DATABASE_URL ||
   process.env.POSTGRES_URL ||
   "postgresql://postgres:postgres@localhost:5432/transport_db";
+
+const connectionString = rawConnectionString.trim().replace(/^["']|["']$/g, "");
 
 // Auto-detect cloud providers and parameters that mandate SSL
 const isSslRequired =

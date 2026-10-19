@@ -2,15 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   updateTransport,
   deleteTransport,
-  getAllTransportsWithDetails,
-  invalidateCache,
+  getTransportById,
 } from "@/db/storage";
 import { UpdateTransportInput } from "@/types";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -23,16 +22,7 @@ export async function GET(
       );
     }
 
-    const { searchParams } = new URL(request.url);
-    const shouldRefresh =
-      searchParams.get("refresh") === "true" ||
-      searchParams.get("clearCache") === "true";
-    if (shouldRefresh) {
-      invalidateCache();
-    }
-
-    const all = await getAllTransportsWithDetails(shouldRefresh);
-    const found = all.find((t) => t.id === numId);
+    const found = await getTransportById(numId);
 
     if (!found) {
       return NextResponse.json(
@@ -41,7 +31,12 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(found);
+    return NextResponse.json(found, {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+        Pragma: "no-cache",
+      },
+    });
   } catch (error) {
     console.error("Failed to get transport:", error);
     return NextResponse.json(

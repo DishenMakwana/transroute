@@ -10,7 +10,7 @@ export async function GET() {
     client.release();
     dbStatus = "connected";
   } catch {
-    dbStatus = "in-memory-fallback";
+    dbStatus = "disconnected";
   }
 
   const uptimeSeconds = Math.floor((Date.now() - START_TIME) / 1000);

@@ -1,20 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getAnalytics, invalidateCache } from "@/db/storage";
+import { NextResponse } from "next/server";
+import { getAnalytics } from "@/db/storage";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const { searchParams } = new URL(request.url);
-    const shouldRefresh =
-      searchParams.get("refresh") === "true" ||
-      searchParams.get("clearCache") === "true";
-
-    if (shouldRefresh) {
-      invalidateCache();
-    }
-
-    const data = await getAnalytics(shouldRefresh);
+    const data = await getAnalytics();
     return NextResponse.json(data, {
       headers: {
         "Cache-Control": "no-store, no-cache, must-revalidate",
@@ -32,8 +23,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST() {
   try {
-    invalidateCache();
-    const data = await getAnalytics(true);
+    const data = await getAnalytics();
     return NextResponse.json(data, {
       headers: {
         "Cache-Control": "no-store, no-cache, must-revalidate",

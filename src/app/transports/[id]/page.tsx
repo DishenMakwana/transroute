@@ -39,7 +39,6 @@ import {
   FreightEstimatorState,
   DropdownOption,
 } from "@/types";
-import { getLocalCache, setLocalCache, clearLocalCache } from "@/helpers/cache";
 
 export default function TransportDetailPage() {
   const params = useParams();
@@ -66,36 +65,12 @@ export default function TransportDetailPage() {
   const fetchTransport = useCallback(
     async (isManualRefresh = false) => {
       if (!id) return;
-
-      const cacheKey = `transport_${id}`;
-      if (isManualRefresh) {
-        clearLocalCache(cacheKey);
-        setIsLoading(true);
-      } else {
-        const cached = getLocalCache<TransportWithDetails>(cacheKey);
-        if (cached) {
-          setTransport(cached);
-          if (cached.pricing && cached.pricing.length > 0) {
-            setEstimator((prev) => ({
-              ...prev,
-              unit: prev.unit || cached.pricing[0].unit,
-            }));
-          }
-          setIsLoading(false);
-        } else {
-          setIsLoading(true);
-        }
-      }
+      setIsLoading(true);
 
       try {
-        const url = isManualRefresh
-          ? `/api/transports/${id}?refresh=true&_t=${Date.now()}`
-          : `/api/transports/${id}`;
-        const res = await fetch(url, {
-          cache: isManualRefresh ? "no-store" : "default",
-          headers: isManualRefresh
-            ? { "Cache-Control": "no-cache, no-store" }
-            : {},
+        const res = await fetch(`/api/transports/${id}`, {
+          cache: "no-store",
+          headers: { "Cache-Control": "no-cache, no-store" },
         });
         if (!res.ok) {
           if (res.status === 404) {
@@ -106,7 +81,6 @@ export default function TransportDetailPage() {
         }
         const data: TransportWithDetails = await res.json();
         setTransport(data);
-        setLocalCache(cacheKey, data);
 
         // Initialize estimator with first pricing rule if available
         if (data.pricing && data.pricing.length > 0) {

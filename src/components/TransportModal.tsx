@@ -121,7 +121,7 @@ const DEFAULT_LOCATION: CreateLocationInput = {
   name: "Head Booking Office",
   address: "",
   city: "",
-  state: "Gujarat",
+  state: "",
   pinCode: "",
   lat: null,
   lng: null,
@@ -132,7 +132,7 @@ const DEFAULT_LOCATION: CreateLocationInput = {
 
 const DEFAULT_PRICING_WEIGHT: CreatePricingInput = {
   pricingType: "weight",
-  rate: 8.5,
+  rate: 0,
   unit: "kg",
   notes: "Standard parcel booking rate",
 };
@@ -493,7 +493,7 @@ export default function TransportModal({
                           onChange={(e) =>
                             handleLocationChange(idx, "name", e.target.value)
                           }
-                          placeholder="e.g. Aslali Godown Hub"
+                          placeholder="e.g. Central Godown Hub"
                           className="w-full h-11 px-3 text-xs bg-zinc-950 border border-zinc-800 rounded-xl font-medium text-zinc-100 hover:border-zinc-700 focus:outline-hidden focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                         />
                       </div>
@@ -542,7 +542,7 @@ export default function TransportModal({
                           onChange={(e) =>
                             handleLocationChange(idx, "city", e.target.value)
                           }
-                          placeholder="e.g. Ahmedabad"
+                          placeholder="Enter city"
                           className="w-full h-11 px-3 text-xs bg-zinc-950 border border-zinc-800 rounded-xl font-medium text-zinc-100 hover:border-zinc-700 focus:outline-hidden focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                         />
                       </div>
@@ -557,7 +557,7 @@ export default function TransportModal({
                           onChange={(e) =>
                             handleLocationChange(idx, "state", e.target.value)
                           }
-                          placeholder="e.g. Gujarat"
+                          placeholder="Enter state"
                           className="w-full h-11 px-3 text-xs bg-zinc-950 border border-zinc-800 rounded-xl font-medium text-zinc-100 hover:border-zinc-700 focus:outline-hidden focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                         />
                       </div>
