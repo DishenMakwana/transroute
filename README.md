@@ -1,4 +1,4 @@
-# 🚛 Transport Box Dispatch (Indian Freight & Logistics Directory)
+# 🚛 TransRoute (Indian Freight & Logistics Directory)
 
 [![Next.js 16](https://img.shields.io/badge/Next.js-16.4.2-black?logo=next.js)](https://nextjs.org/)
 [![React 19](https://img.shields.io/badge/React-19.0.0-blue?logo=react)](https://react.dev/)
@@ -9,7 +9,7 @@
 [![TypeScript Strict](https://img.shields.io/badge/TypeScript-Strict_5.7-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Verification Pipeline](https://img.shields.io/badge/Pipeline-Format%20%7C%20Lint%20%7C%20Knip%20%7C%20Build-emerald)](https://github.com/)
 
-An AI-native, high-performance B2B Indian road freight directory and tariff intelligence platform. Search road transport operators across multi-state trade corridors, compare per-kg and per-box freight rates, inspect branch godown networks, visualize macro freight analytics, and export standardized rate sheets.
+**TransRoute** is an AI-native, high-performance B2B Indian road freight directory and tariff intelligence platform. Search road transport operators across multi-state trade corridors, compare per-kg and per-box freight rates, inspect branch godown networks, visualize macro freight analytics, and export standardized rate sheets.
 
 ---
 
@@ -72,8 +72,8 @@ An AI-native, high-performance B2B Indian road freight directory and tariff inte
 
 ### 2. Clone and Install
 ```bash
-git clone https://github.com/your-username/transport-box-dispatch.git
-cd transport-box-dispatch
+git clone https://github.com/your-username/transroute.git
+cd transroute
 bun install
 ```
 
@@ -82,7 +82,7 @@ Create a `.env.local` or `.env` file in the root directory:
 
 ```env
 # PostgreSQL Connection URL
-DATABASE_URL="postgres://username:password@localhost:5432/transport_db"
+DATABASE_URL="postgres://username:password@localhost:5432/transroute_db"
 
 # Optional: Next.js Public URL (defaults to http://localhost:3000)
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
@@ -144,7 +144,7 @@ bun run build
 ## 📂 Project Structure
 
 ```
-transport/
+transroute/
 ├── AGENTS.md                  # Deterministic engineering runtime instructions
 ├── knip.json                  # Dead-code & orphan export validator configuration
 ├── package.json               # Scripts, dependencies, and engine targets
@@ -200,10 +200,10 @@ Build and run the production image using Docker:
 
 ```dockerfile
 # Build image
-docker build -t transport-directory .
+docker build -t transroute .
 
 # Run container
-docker run -p 3000:3000 --env-file .env transport-directory
+docker run -p 3000:3000 --env-file .env transroute
 ```
 
 ---
