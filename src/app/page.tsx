@@ -437,7 +437,7 @@ function HomePageContent() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-[1640px] w-full mx-auto px-4 sm:px-6 lg:px-6 py-6">
+      <main className="flex-1 max-w-[1640px] w-full mx-auto px-4 sm:px-6 lg:px-6 pt-4 sm:pt-6 pb-4 sm:pb-6">
         {/* Search Hero with Route & Destination inputs */}
         <SearchBar
           source={source}
@@ -614,7 +614,7 @@ function HomePageContent() {
       </main>
 
       {/* Footer - Low Profile */}
-      <footer className="mt-6 sm:mt-8 border-t border-zinc-900 bg-zinc-950/80 py-4 sm:py-5 pb-12 sm:pb-6 text-center text-xs text-zinc-500">
+      <footer className="border-t border-zinc-900 bg-zinc-950/80 py-4 sm:py-5 text-center text-xs text-zinc-500">
         <div className="max-w-[1640px] mx-auto px-4 sm:px-6 lg:px-6 flex flex-col sm:flex-row items-center justify-between gap-2.5">
           <p>
             © {new Date().getFullYear()} TransRoute. Specialized in Domestic Box
@@ -669,7 +669,7 @@ function HomePageSkeleton() {
   return (
     <div className="min-h-screen flex flex-col bg-zinc-950 text-zinc-100 animate-pulse">
       <div className="h-16 border-b border-zinc-800 bg-zinc-950" />
-      <main className="flex-1 max-w-[1640px] w-full mx-auto px-4 sm:px-6 lg:px-6 py-6 space-y-6">
+      <main className="flex-1 max-w-[1640px] w-full mx-auto px-4 sm:px-6 lg:px-6 pt-4 sm:pt-6 pb-4 sm:pb-6 space-y-6">
         <div className="h-32 rounded-2xl bg-zinc-900/60 border border-zinc-800/80" />
         <div className="h-28 rounded-2xl bg-zinc-900/40 border border-zinc-800/80" />
         <div className="h-96 rounded-2xl bg-zinc-900/30 border border-zinc-800/60" />

@@ -369,7 +369,7 @@ export default function TransportDetailPage() {
     return (
       <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col font-sans animate-pulse">
         <div className="h-16 border-b border-zinc-800 bg-zinc-950/80" />
-        <main className="flex-1 max-w-[1640px] w-full mx-auto px-4 sm:px-6 lg:px-6 py-8 space-y-6">
+        <main className="flex-1 max-w-[1640px] w-full mx-auto px-4 sm:px-6 lg:px-6 pt-4 sm:pt-8 pb-4 sm:pb-6 space-y-6">
           <div className="h-44 rounded-3xl bg-zinc-900/60 border border-zinc-800/80" />
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -492,35 +492,35 @@ export default function TransportDetailPage() {
       </header>
 
       {/* Main Container */}
-      <main className="flex-1 max-w-[1640px] w-full mx-auto px-4 sm:px-6 lg:px-6 py-8 space-y-8">
+      <main className="flex-1 max-w-[1640px] w-full mx-auto px-3.5 sm:px-6 lg:px-6 pt-4 sm:pt-8 pb-4 sm:pb-6 space-y-4 sm:space-y-8">
         {/* Dribbble Bento Hero Header */}
-        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-zinc-900 via-zinc-900/90 to-zinc-950 p-6 sm:p-8 border border-zinc-800/90 shadow-2xl backdrop-blur-md">
+        <section className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-zinc-900 via-zinc-900/90 to-zinc-950 p-4 sm:p-8 border border-zinc-800/90 shadow-xl sm:shadow-2xl backdrop-blur-md">
           <div className="absolute right-0 top-0 -mt-10 -mr-10 h-72 w-72 rounded-full bg-orange-500/10 blur-3xl pointer-events-none" />
           <div className="absolute left-1/3 bottom-0 -mb-10 h-48 w-48 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-            <div className="space-y-3">
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-5 sm:gap-6">
+            <div className="space-y-2.5 sm:space-y-3">
               {/* Badges strip */}
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-zinc-950 text-zinc-200 border border-zinc-800">
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                <span className="text-[10px] sm:text-xs font-mono font-bold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-zinc-950 text-zinc-200 border border-zinc-800">
                   Carrier #{transport.id}
                 </span>
 
                 {transport.isVerified && (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-sky-950/70 text-sky-400 border border-sky-800/70">
-                    <ShieldCheck className="h-3.5 w-3.5 text-sky-400" />
+                  <span className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-semibold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-sky-950/70 text-sky-400 border border-sky-800/70">
+                    <ShieldCheck className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-sky-400 shrink-0" />
                     <span>Verified Domestic Carrier</span>
                   </span>
                 )}
 
                 <span
-                  className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg border ${
+                  className={`inline-flex items-center gap-1 text-[10px] sm:text-xs font-semibold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg border ${
                     transport.isOpenNow
                       ? "bg-emerald-950/70 text-emerald-400 border-emerald-800/70"
                       : "bg-zinc-800/70 text-zinc-400 border-zinc-700/70"
                   }`}
                 >
-                  <Clock className="h-3.5 w-3.5" />
+                  <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0" />
                   <span>
                     {transport.isOpenNow ? "Hubs Open Now" : "Currently Closed"}
                   </span>
@@ -528,15 +528,15 @@ export default function TransportDetailPage() {
               </div>
 
               {/* Carrier Title */}
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
+              <h1 className="text-xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight break-words">
                 {transport.name}
               </h1>
 
               {/* GSTIN & Primary Phone */}
-              <div className="flex flex-wrap items-center gap-4 text-xs text-zinc-400 font-mono pt-1">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-zinc-400 font-mono pt-0.5 sm:pt-1">
                 {transport.gstNumber && (
-                  <div className="flex items-center gap-2 bg-zinc-950/80 px-3 py-1.5 rounded-xl border border-zinc-800">
-                    <span className="text-[10px] uppercase font-bold text-zinc-500">
+                  <div className="flex items-center gap-1.5 sm:gap-2 bg-zinc-950/80 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl border border-zinc-800 text-[11px] sm:text-xs">
+                    <span className="text-[9px] sm:text-[10px] uppercase font-bold text-zinc-500">
                       GSTIN:
                     </span>
                     <span className="font-semibold text-zinc-200">
@@ -550,12 +550,12 @@ export default function TransportDetailPage() {
                       className="p-1 hover:text-orange-400 rounded transition-colors cursor-pointer text-zinc-500"
                       title="Copy GSTIN"
                     >
-                      <Copy className="h-3.5 w-3.5" />
+                      <Copy className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                     </button>
                   </div>
                 )}
 
-                <div className="flex items-center gap-2 bg-zinc-950/80 px-3 py-1.5 rounded-xl border border-zinc-800">
+                <div className="flex items-center gap-1.5 sm:gap-2 bg-zinc-950/80 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl border border-zinc-800 text-[11px] sm:text-xs">
                   <Phone className="h-3 w-3 text-zinc-400" />
                   <span className="font-semibold text-zinc-200">
                     {transport.phoneNumber}
@@ -565,168 +565,186 @@ export default function TransportDetailPage() {
             </div>
 
             {/* Quick Action Cluster */}
-            <div className="grid grid-cols-2 sm:flex sm:items-center gap-2.5 w-full lg:w-auto shrink-0">
-              {/* Call */}
-              <a
-                href={`tel:${getCleanPhone(transport.phoneNumber)}`}
-                className="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 text-xs font-bold rounded-xl bg-zinc-800 hover:bg-zinc-750 text-white border border-zinc-700 transition-all shadow-md active:scale-95"
-              >
-                <Phone className="h-4 w-4 text-orange-400" />
-                <span>Call Carrier</span>
-              </a>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-2.5 w-full lg:w-auto shrink-0 pt-2 lg:pt-0 border-t border-zinc-800/60 lg:border-t-0">
+              {/* Primary Contact Actions */}
+              <div className="grid grid-cols-2 gap-2 w-full sm:w-auto sm:flex sm:items-center">
+                {/* Call */}
+                <a
+                  href={`tel:${getCleanPhone(transport.phoneNumber)}`}
+                  className="inline-flex items-center justify-center gap-2 h-11 sm:h-auto px-3.5 py-2.5 text-xs font-bold rounded-xl bg-zinc-800 hover:bg-zinc-750 text-white border border-zinc-700 transition-all shadow-md active:scale-95 cursor-pointer"
+                >
+                  <Phone className="h-4 w-4 text-orange-400 shrink-0" />
+                  <span>Call Carrier</span>
+                </a>
 
-              {/* WhatsApp */}
-              <a
-                href={getWhatsAppLink(transport.phoneNumber, transport.name)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-lg shadow-emerald-600/25 active:scale-95"
-              >
-                <MessageCircle className="h-4 w-4" />
-                <span>WhatsApp Quote</span>
-              </a>
+                {/* WhatsApp */}
+                <a
+                  href={getWhatsAppLink(transport.phoneNumber, transport.name)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 h-11 sm:h-auto px-3.5 py-2.5 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-lg shadow-emerald-600/25 active:scale-95 cursor-pointer"
+                >
+                  <MessageCircle className="h-4 w-4 shrink-0" />
+                  <span>WhatsApp Quote</span>
+                </a>
+              </div>
 
-              {/* Edit */}
-              <button
-                type="button"
-                onClick={() => setIsEditModalOpen(true)}
-                className="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 text-xs font-semibold rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 transition-all cursor-pointer"
-                title="Edit Carrier Details"
-              >
-                <Pencil className="h-4 w-4 text-zinc-400" />
-                <span>Edit</span>
-              </button>
+              {/* Administrative Actions */}
+              <div className="grid grid-cols-2 gap-2 w-full sm:w-auto sm:flex sm:items-center">
+                {/* Edit */}
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(true)}
+                  className="inline-flex items-center justify-center gap-2 h-10 sm:h-auto px-3.5 py-2.5 text-xs font-semibold rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 transition-all cursor-pointer"
+                  title="Edit Carrier Details"
+                >
+                  <Pencil className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
+                  <span>Edit</span>
+                </button>
 
-              {/* Delete */}
-              <button
-                type="button"
-                onClick={() => setIsDeleteModalOpen(true)}
-                className="p-2.5 rounded-xl bg-zinc-900 text-zinc-500 hover:text-rose-400 hover:bg-rose-950/40 border border-zinc-800 hover:border-rose-900 transition-all cursor-pointer flex items-center justify-center gap-1.5"
-                title="Delete Carrier"
-              >
-                <Trash2 className="h-4 w-4" />
-                <span className="sm:hidden text-xs font-semibold">Delete</span>
-              </button>
+                {/* Delete */}
+                <button
+                  type="button"
+                  onClick={() => setIsDeleteModalOpen(true)}
+                  className="h-10 sm:h-auto px-3.5 py-2.5 rounded-xl bg-zinc-900 text-zinc-500 hover:text-rose-400 hover:bg-rose-950/40 border border-zinc-800 hover:border-rose-900 transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                  title="Delete Carrier"
+                >
+                  <Trash2 className="h-3.5 w-3.5 shrink-0" />
+                  <span className="sm:hidden text-xs font-semibold">
+                    Delete
+                  </span>
+                </button>
+              </div>
             </div>
           </div>
         </section>
 
         {/* 6-Item KPI Bento Strip */}
-        <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-          <div className="rounded-2xl bg-zinc-900/80 p-5 border border-zinc-800/90 shadow-xl backdrop-blur-sm">
+        <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-4">
+          <div className="rounded-xl sm:rounded-2xl bg-zinc-900/80 p-3.5 sm:p-5 border border-zinc-800/90 shadow-md sm:shadow-xl backdrop-blur-sm flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
+              <span className="text-[10px] sm:text-xs font-medium text-zinc-400 uppercase tracking-wider">
                 Total Hubs
               </span>
-              <Building2 className="h-4 w-4 text-orange-400" />
+              <Building2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-orange-400" />
             </div>
-            <p className="mt-2 text-2xl font-bold font-mono text-white">
+            <p className="mt-1.5 sm:mt-2 text-xl sm:text-2xl font-bold font-mono text-white">
               {transport.locations.length}
             </p>
-            <p className="mt-1 text-[11px] text-zinc-400">Offices & Godowns</p>
+            <p className="mt-0.5 sm:mt-1 text-[10px] sm:text-[11px] text-zinc-400">
+              Offices & Godowns
+            </p>
           </div>
 
-          <div className="rounded-2xl bg-zinc-900/80 p-5 border border-zinc-800/90 shadow-xl backdrop-blur-sm">
+          <div className="rounded-xl sm:rounded-2xl bg-zinc-900/80 p-3.5 sm:p-5 border border-zinc-800/90 shadow-md sm:shadow-xl backdrop-blur-sm flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
+              <span className="text-[10px] sm:text-xs font-medium text-zinc-400 uppercase tracking-wider">
                 Cities
               </span>
-              <MapPin className="h-4 w-4 text-emerald-400" />
+              <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-400" />
             </div>
-            <p className="mt-2 text-2xl font-bold font-mono text-white">
+            <p className="mt-1.5 sm:mt-2 text-xl sm:text-2xl font-bold font-mono text-white">
               {uniqueCities.length}
             </p>
-            <p className="mt-1 text-[11px] text-zinc-400">Active Terminals</p>
+            <p className="mt-0.5 sm:mt-1 text-[10px] sm:text-[11px] text-zinc-400">
+              Active Terminals
+            </p>
           </div>
 
-          <div className="rounded-2xl bg-zinc-900/80 p-5 border border-zinc-800/90 shadow-xl backdrop-blur-sm">
+          <div className="rounded-xl sm:rounded-2xl bg-zinc-900/80 p-3.5 sm:p-5 border border-zinc-800/90 shadow-md sm:shadow-xl backdrop-blur-sm flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
+              <span className="text-[10px] sm:text-xs font-medium text-zinc-400 uppercase tracking-wider">
                 States
               </span>
-              <Navigation className="h-4 w-4 text-blue-400" />
+              <Navigation className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-blue-400" />
             </div>
-            <p className="mt-2 text-2xl font-bold font-mono text-white">
+            <p className="mt-1.5 sm:mt-2 text-xl sm:text-2xl font-bold font-mono text-white">
               {uniqueStates.length}
             </p>
-            <p className="mt-1 text-[11px] text-zinc-400">Regional Footprint</p>
+            <p className="mt-0.5 sm:mt-1 text-[10px] sm:text-[11px] text-zinc-400">
+              Regional Footprint
+            </p>
           </div>
 
-          <div className="rounded-2xl bg-zinc-900/80 p-5 border border-zinc-800/90 shadow-xl backdrop-blur-sm">
+          <div className="rounded-xl sm:rounded-2xl bg-zinc-900/80 p-3.5 sm:p-5 border border-zinc-800/90 shadow-md sm:shadow-xl backdrop-blur-sm flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
+              <span className="text-[10px] sm:text-xs font-medium text-zinc-400 uppercase tracking-wider">
                 Min Weight Rate
               </span>
-              <Weight className="h-4 w-4 text-purple-400" />
+              <Weight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-purple-400" />
             </div>
-            <p className="mt-2 text-2xl font-bold font-mono text-emerald-400">
+            <p className="mt-1.5 sm:mt-2 text-xl sm:text-2xl font-bold font-mono text-emerald-400">
               {minWeightRate !== null ? `₹${minWeightRate}` : "—"}
             </p>
-            <p className="mt-1 text-[11px] text-zinc-400">Starting per kg</p>
+            <p className="mt-0.5 sm:mt-1 text-[10px] sm:text-[11px] text-zinc-400">
+              Starting per kg
+            </p>
           </div>
 
-          <div className="rounded-2xl bg-zinc-900/80 p-5 border border-zinc-800/90 shadow-xl backdrop-blur-sm">
+          <div className="rounded-xl sm:rounded-2xl bg-zinc-900/80 p-3.5 sm:p-5 border border-zinc-800/90 shadow-md sm:shadow-xl backdrop-blur-sm flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
+              <span className="text-[10px] sm:text-xs font-medium text-zinc-400 uppercase tracking-wider">
                 Min Box Rate
               </span>
-              <Package className="h-4 w-4 text-amber-400" />
+              <Package className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-amber-400" />
             </div>
-            <p className="mt-2 text-2xl font-bold font-mono text-orange-400">
+            <p className="mt-1.5 sm:mt-2 text-xl sm:text-2xl font-bold font-mono text-orange-400">
               {minBoxRate !== null ? `₹${minBoxRate}` : "—"}
             </p>
-            <p className="mt-1 text-[11px] text-zinc-400">
+            <p className="mt-0.5 sm:mt-1 text-[10px] sm:text-[11px] text-zinc-400">
               Starting per carton
             </p>
           </div>
 
-          <div className="rounded-2xl bg-zinc-900/80 p-5 border border-zinc-800/90 shadow-xl backdrop-blur-sm">
+          <div className="rounded-xl sm:rounded-2xl bg-zinc-900/80 p-3.5 sm:p-5 border border-zinc-800/90 shadow-md sm:shadow-xl backdrop-blur-sm flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
+              <span className="text-[10px] sm:text-xs font-medium text-zinc-400 uppercase tracking-wider">
                 Facility Ratio
               </span>
-              <Layers className="h-4 w-4 text-cyan-400" />
+              <Layers className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-cyan-400" />
             </div>
-            <p className="mt-2 text-2xl font-bold font-mono text-white">
+            <p className="mt-1.5 sm:mt-2 text-xl sm:text-2xl font-bold font-mono text-white">
               {offices.length}:{godowns.length + fullHubs.length}
             </p>
-            <p className="mt-1 text-[11px] text-zinc-400">Offices vs Depots</p>
+            <p className="mt-0.5 sm:mt-1 text-[10px] sm:text-[11px] text-zinc-400">
+              Offices vs Depots
+            </p>
           </div>
         </section>
 
         {/* Middle Section: Freight Tariffs Matrix & Interactive Live Estimator */}
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Left Column: Full Rate Card (Weight & Carton Box) */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="rounded-2xl bg-zinc-900/90 p-6 border border-zinc-800/90 shadow-xl backdrop-blur-sm space-y-5">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+            <div className="rounded-2xl bg-zinc-900/90 p-4 sm:p-6 border border-zinc-800/90 shadow-xl backdrop-blur-sm space-y-4 sm:space-y-5">
               <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
                 <div>
-                  <h2 className="text-base font-bold uppercase tracking-wider text-zinc-100 flex items-center gap-2">
-                    <Package className="h-4 w-4 text-orange-400" />
-                    Freight Tariff Schedule & Rates
+                  <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-zinc-100 flex items-center gap-2">
+                    <Package className="h-4 w-4 text-orange-400 shrink-0" />
+                    <span>Freight Tariff Schedule & Rates</span>
                   </h2>
-                  <p className="text-xs text-zinc-400 mt-0.5">
+                  <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5">
                     Official billing units, rate tiers, and consignment handling
                     notes
                   </p>
                 </div>
-                <span className="text-xs font-mono text-zinc-400 bg-zinc-950 px-2.5 py-1 rounded-lg border border-zinc-800">
+                <span className="text-[11px] sm:text-xs font-mono text-zinc-400 bg-zinc-950 px-2.5 py-1 rounded-lg border border-zinc-800 shrink-0">
                   {transport.pricing.length} Rules Active
                 </span>
               </div>
 
               {/* Weight Pricing Tiers */}
               {weightPricing.length > 0 && (
-                <div className="space-y-3">
+                <div className="space-y-2.5 sm:space-y-3">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
-                    <Weight className="h-3.5 w-3.5 text-orange-400" />
-                    Weight-Based Freight Rates
+                    <Weight className="h-3.5 w-3.5 text-orange-400 shrink-0" />
+                    <span>Weight-Based Freight Rates</span>
                   </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                     {weightPricing.map((prc) => (
                       <div
                         key={prc.id}
-                        className="p-4 rounded-xl bg-zinc-950/80 border border-zinc-800/90 flex flex-col justify-between space-y-2 hover:border-zinc-700 transition-colors"
+                        className="p-3.5 sm:p-4 rounded-xl bg-zinc-950/80 border border-zinc-800/90 flex flex-col justify-between space-y-2 hover:border-zinc-700 transition-colors"
                       >
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-semibold text-zinc-300 capitalize">
@@ -753,16 +771,16 @@ export default function TransportDetailPage() {
 
               {/* Box / Volumetric Pricing Tiers */}
               {boxPricing.length > 0 && (
-                <div className="space-y-3 pt-2">
+                <div className="space-y-2.5 sm:space-y-3 pt-2">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
-                    <Layers className="h-3.5 w-3.5 text-sky-400" />
-                    Box Size & Volumetric Freight Rates
+                    <Layers className="h-3.5 w-3.5 text-sky-400 shrink-0" />
+                    <span>Box Size & Volumetric Freight Rates</span>
                   </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                     {boxPricing.map((prc) => (
                       <div
                         key={prc.id}
-                        className="p-4 rounded-xl bg-zinc-950/80 border border-zinc-800/90 flex flex-col justify-between space-y-2 hover:border-zinc-700 transition-colors"
+                        className="p-3.5 sm:p-4 rounded-xl bg-zinc-950/80 border border-zinc-800/90 flex flex-col justify-between space-y-2 hover:border-zinc-700 transition-colors"
                       >
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-semibold text-zinc-300 capitalize">
@@ -791,15 +809,15 @@ export default function TransportDetailPage() {
 
           {/* Right Column: Interactive Live Freight Cost Estimator */}
           <div className="lg:col-span-1">
-            <div className="relative z-20 rounded-2xl bg-zinc-900/90 p-6 border border-zinc-800/90 shadow-xl backdrop-blur-sm space-y-5 sticky top-24">
+            <div className="relative z-20 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-900/95 to-zinc-950 p-4 sm:p-6 border border-orange-500/30 sm:border-zinc-800/90 shadow-xl backdrop-blur-sm space-y-4 sm:space-y-5 sticky top-20 sm:top-24">
               <div className="flex items-center gap-2 pb-3 border-b border-zinc-800">
-                <Calculator className="h-4 w-4 text-orange-400" />
+                <Calculator className="h-4 w-4 text-orange-400 shrink-0" />
                 <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-100">
                   Instant Freight Estimator
                 </h3>
               </div>
 
-              <div className="space-y-4 text-xs">
+              <div className="space-y-3.5 sm:space-y-4 text-xs">
                 {/* Select Rate Unit */}
                 <div>
                   <CustomDropdown<string>
@@ -840,13 +858,13 @@ export default function TransportDetailPage() {
                         quantity: Math.max(1, Number(e.target.value) || 0),
                       }))
                     }
-                    className="w-full bg-zinc-950 text-xs font-mono font-bold text-white border border-zinc-800 rounded-xl px-3 py-2 focus:outline-none focus:border-orange-500/60"
+                    className="w-full h-11 sm:h-auto bg-zinc-950 text-xs font-mono font-bold text-white border border-zinc-800 rounded-xl px-3 py-2.5 focus:outline-none focus:border-orange-500/60"
                     placeholder="Enter quantity or weight..."
                   />
                 </div>
 
                 {/* Cost Summary Box */}
-                <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800/90 space-y-2">
+                <div className="p-3.5 sm:p-4 rounded-xl bg-zinc-950 border border-zinc-800/90 space-y-2">
                   <div className="flex items-center justify-between text-zinc-400">
                     <span>Base Tariff Rate</span>
                     <span className="font-mono text-zinc-200">
@@ -887,9 +905,9 @@ export default function TransportDetailPage() {
                   )}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-md shadow-emerald-600/20"
+                  className="w-full h-11 sm:h-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-md shadow-emerald-600/20 active:scale-95 cursor-pointer"
                 >
-                  <MessageCircle className="h-4 w-4" />
+                  <MessageCircle className="h-4 w-4 shrink-0" />
                   <span>Enquire for this Cargo Quote</span>
                 </a>
               </div>
@@ -898,32 +916,32 @@ export default function TransportDetailPage() {
         </section>
 
         {/* Lower Section: Facilities & Godown Network Directory */}
-        <section className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-800">
+        <section className="space-y-3.5 sm:space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 pb-3 border-b border-zinc-800">
             <div>
-              <h2 className="text-base font-bold uppercase tracking-wider text-zinc-100 flex items-center gap-2">
-                <Building2 className="h-4 w-4 text-orange-400" />
-                Network Facilities, Booking Offices & Godowns
+              <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-zinc-100 flex items-center gap-2">
+                <Building2 className="h-4 w-4 text-orange-400 shrink-0" />
+                <span>Network Facilities, Booking Offices & Godowns</span>
               </h2>
-              <p className="text-xs text-zinc-400 mt-0.5">
+              <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5">
                 All physical logistics counters, parcel intake points, and
                 unloading godowns for {transport.name}
               </p>
             </div>
-            <span className="text-xs font-mono text-zinc-400">
+            <span className="text-[11px] sm:text-xs font-mono text-zinc-400">
               Showing {filteredFacilities.length} of{" "}
               {transport.locations.length} Facilities
             </span>
           </div>
 
           {/* Facility Controls Bar */}
-          <div className="bg-zinc-900/80 p-3 rounded-2xl border border-zinc-800/90 shadow-lg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 backdrop-blur-sm">
-            {/* Filter Tabs */}
-            <div className="flex items-center gap-1.5 flex-wrap">
+          <div className="bg-zinc-900/80 p-2.5 sm:p-3 rounded-2xl border border-zinc-800/90 shadow-lg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 sm:gap-3 backdrop-blur-sm">
+            {/* Filter Tabs - Horizontal Scroll on Mobile */}
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 sm:pb-0 sm:flex-wrap">
               <button
                 type="button"
                 onClick={() => setFacilityTab("all")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0 sm:shrink ${
                   facilityTab === "all"
                     ? "bg-zinc-800 text-white shadow-sm border border-zinc-700"
                     : "text-zinc-400 hover:text-zinc-200"
@@ -934,7 +952,7 @@ export default function TransportDetailPage() {
               <button
                 type="button"
                 onClick={() => setFacilityTab("office")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0 sm:shrink ${
                   facilityTab === "office"
                     ? "bg-zinc-800 text-white shadow-sm border border-zinc-700"
                     : "text-zinc-400 hover:text-zinc-200"
@@ -945,7 +963,7 @@ export default function TransportDetailPage() {
               <button
                 type="button"
                 onClick={() => setFacilityTab("pickup_and_dropoff")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0 sm:shrink ${
                   facilityTab === "pickup_and_dropoff"
                     ? "bg-zinc-800 text-white shadow-sm border border-zinc-700"
                     : "text-zinc-400 hover:text-zinc-200"
@@ -956,7 +974,7 @@ export default function TransportDetailPage() {
               <button
                 type="button"
                 onClick={() => setFacilityTab("godown")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0 sm:shrink ${
                   facilityTab === "godown"
                     ? "bg-zinc-800 text-white shadow-sm border border-zinc-700"
                     : "text-zinc-400 hover:text-zinc-200"
@@ -967,20 +985,20 @@ export default function TransportDetailPage() {
             </div>
 
             {/* Local Search Input */}
-            <div className="relative min-w-[260px]">
+            <div className="relative w-full md:w-auto md:min-w-[260px]">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-500" />
               <input
                 type="text"
                 placeholder="Search facility by city or address..."
                 value={facilitySearch}
                 onChange={(e) => setFacilitySearch(e.target.value)}
-                className="w-full pl-9 pr-3 py-1.5 text-xs bg-zinc-950 text-zinc-200 border border-zinc-800 rounded-xl focus:outline-none focus:border-orange-500/60 placeholder:text-zinc-500"
+                className="w-full h-10 sm:h-auto pl-9 pr-3 py-2 sm:py-1.5 text-xs bg-zinc-950 text-zinc-200 border border-zinc-800 rounded-xl focus:outline-none focus:border-orange-500/60 placeholder:text-zinc-500"
               />
             </div>
           </div>
 
           {/* Facility Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
             {filteredFacilities.map((loc) => {
               const isOffice = loc.locationType === "office";
               const isOpen = isFacilityOpenNow(
@@ -992,12 +1010,12 @@ export default function TransportDetailPage() {
               return (
                 <div
                   key={loc.id}
-                  className="rounded-2xl bg-zinc-900/90 p-5 border border-zinc-800/90 shadow-xl backdrop-blur-sm flex flex-col justify-between space-y-4 hover:border-zinc-700/80 transition-all duration-200"
+                  className="rounded-2xl bg-zinc-900/90 p-4 sm:p-5 border border-zinc-800/90 shadow-xl backdrop-blur-sm flex flex-col justify-between space-y-3 sm:space-y-4 hover:border-zinc-700/80 transition-all duration-200"
                 >
                   <div className="space-y-3">
                     {/* Header: Name & Type Badge */}
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-start gap-2.5">
+                    <div className="flex items-start justify-between gap-2.5">
+                      <div className="flex items-start gap-2.5 min-w-0 flex-1">
                         <div
                           className={`p-2 rounded-xl shrink-0 mt-0.5 ${
                             isOffice
@@ -1011,12 +1029,12 @@ export default function TransportDetailPage() {
                             <MapPin className="h-4 w-4" />
                           )}
                         </div>
-                        <div>
-                          <h4 className="text-sm font-bold text-zinc-100">
+                        <div className="min-w-0">
+                          <h4 className="text-sm font-bold text-zinc-100 leading-snug break-words">
                             {loc.name}
                           </h4>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-zinc-800 text-zinc-300 border border-zinc-700/60 uppercase">
+                          <div className="flex items-center gap-1.5 flex-wrap mt-1">
+                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-zinc-800 text-zinc-300 border border-zinc-700/60 uppercase shrink-0">
                               {loc.locationType.replace(/_/g, " ")}
                             </span>
                             <span className="text-[11px] font-medium text-orange-400">
@@ -1041,7 +1059,7 @@ export default function TransportDetailPage() {
 
                     {/* Full Address */}
                     <div className="p-3 rounded-xl bg-zinc-950/80 border border-zinc-800/70 text-xs text-zinc-300 flex items-start justify-between gap-2">
-                      <p className="leading-relaxed">
+                      <p className="leading-relaxed break-words flex-1">
                         {loc.address}, {loc.city}, {loc.state} -{" "}
                         <span className="font-mono font-semibold text-zinc-100">
                           {loc.pinCode}
@@ -1065,7 +1083,7 @@ export default function TransportDetailPage() {
                     {/* Business Hours & Contact Phone */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-zinc-400 pt-1">
                       <div className="flex items-center gap-2">
-                        <Clock className="h-3.5 w-3.5 text-zinc-500" />
+                        <Clock className="h-3.5 w-3.5 text-zinc-500 shrink-0" />
                         <span>
                           Hours: {loc.businessHoursStart} -{" "}
                           {loc.businessHoursEnd}
@@ -1073,7 +1091,7 @@ export default function TransportDetailPage() {
                       </div>
                       {loc.contactPhone && (
                         <div className="flex items-center gap-2">
-                          <Phone className="h-3.5 w-3.5 text-zinc-500" />
+                          <Phone className="h-3.5 w-3.5 text-zinc-500 shrink-0" />
                           <a
                             href={`tel:${getCleanPhone(loc.contactPhone)}`}
                             className="font-mono text-zinc-300 hover:text-orange-400 transition-colors"
@@ -1085,13 +1103,13 @@ export default function TransportDetailPage() {
                     </div>
                   </div>
 
-                  {/* Actions Bar */}
-                  <div className="pt-3 border-t border-zinc-800/80 flex items-center justify-between gap-3">
+                  {/* Actions Bar - Touch-Friendly on Mobile */}
+                  <div className="pt-3 border-t border-zinc-800/80 flex flex-col xs:flex-row xs:items-center justify-between gap-2.5">
                     <span className="text-[11px] text-zinc-500 font-mono">
                       PIN: {loc.pinCode}
                     </span>
 
-                    <div className="flex items-center gap-2">
+                    <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full xs:w-auto">
                       {loc.contactPhone && (
                         <a
                           href={getWhatsAppLink(
@@ -1101,9 +1119,9 @@ export default function TransportDetailPage() {
                           )}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-lg bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/30 border border-emerald-500/30 transition-colors"
+                          className="inline-flex items-center justify-center gap-1.5 h-9 sm:h-auto px-3 py-1.5 text-xs font-semibold rounded-xl sm:rounded-lg bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/30 border border-emerald-500/30 transition-colors cursor-pointer"
                         >
-                          <MessageCircle className="h-3.5 w-3.5" />
+                          <MessageCircle className="h-3.5 w-3.5 shrink-0" />
                           <span>WhatsApp</span>
                         </a>
                       )}
@@ -1112,10 +1130,12 @@ export default function TransportDetailPage() {
                         href={mapsUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-lg bg-zinc-800 hover:bg-zinc-750 text-zinc-200 border border-zinc-700 transition-colors"
+                        className={`inline-flex items-center justify-center gap-1.5 h-9 sm:h-auto px-3 py-1.5 text-xs font-semibold rounded-xl sm:rounded-lg bg-zinc-800 hover:bg-zinc-750 text-zinc-200 border border-zinc-700 transition-colors cursor-pointer ${
+                          !loc.contactPhone ? "col-span-2 sm:col-span-1" : ""
+                        }`}
                       >
                         <span>Directions</span>
-                        <ExternalLink className="h-3.5 w-3.5" />
+                        <ExternalLink className="h-3.5 w-3.5 shrink-0" />
                       </a>
                     </div>
                   </div>
@@ -1126,24 +1146,24 @@ export default function TransportDetailPage() {
         </section>
 
         {/* Route Connectivity Summary */}
-        <section className="rounded-2xl bg-zinc-900/80 p-6 border border-zinc-800/90 shadow-xl backdrop-blur-sm space-y-4">
+        <section className="rounded-2xl bg-zinc-900/80 p-4 sm:p-6 border border-zinc-800/90 shadow-xl backdrop-blur-sm space-y-3 sm:space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
             <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-100 flex items-center gap-2">
-              <Truck className="h-4 w-4 text-orange-400" />
-              Operational Network Cities ({uniqueCities.length})
+              <Truck className="h-4 w-4 text-orange-400 shrink-0" />
+              <span>Operational Network Cities ({uniqueCities.length})</span>
             </h3>
-            <span className="text-xs font-mono text-zinc-400">
+            <span className="text-[11px] sm:text-xs font-mono text-zinc-400">
               Direct Delivery & Booking Points
             </span>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2">
             {uniqueCities.map((city) => (
               <span
                 key={city}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-zinc-950 border border-zinc-800 text-xs font-medium text-zinc-300"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1 rounded-xl bg-zinc-950 border border-zinc-800 text-[11px] sm:text-xs font-medium text-zinc-300"
               >
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
                 <span>{city}</span>
               </span>
             ))}
@@ -1152,8 +1172,8 @@ export default function TransportDetailPage() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-16 border-t border-zinc-900 bg-zinc-950 py-8 text-center text-xs text-zinc-500">
-        <div className="max-w-[1640px] mx-auto px-4 sm:px-6 lg:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <footer className="border-t border-zinc-900 bg-zinc-950 py-4 sm:py-5 text-center text-xs text-zinc-500">
+        <div className="max-w-[1640px] mx-auto px-4 sm:px-6 lg:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
           <Link
             href="/"
             className="text-orange-400 hover:text-orange-300 font-semibold inline-flex items-center gap-1.5"

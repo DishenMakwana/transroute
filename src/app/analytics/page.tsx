@@ -473,7 +473,7 @@ export default function AnalyticsPage() {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-[1640px] w-full mx-auto px-3.5 sm:px-6 lg:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
+      <main className="flex-1 max-w-[1640px] w-full mx-auto px-3.5 sm:px-6 lg:px-6 pt-4 sm:pt-8 pb-4 sm:pb-6 space-y-6 sm:space-y-8">
         {/* Page Title & Mission Banner */}
         <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-zinc-900 via-zinc-900/90 to-zinc-950 p-4 sm:p-6 lg:p-8 border border-zinc-800/90 shadow-2xl">
           <div className="absolute right-0 top-0 -mt-12 -mr-12 h-64 w-64 rounded-full bg-orange-500/10 blur-3xl pointer-events-none" />
@@ -1243,7 +1243,7 @@ export default function AnalyticsPage() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-10 sm:mt-16 border-t border-zinc-900 bg-zinc-950 py-6 sm:py-8 text-center text-xs text-zinc-400">
+      <footer className="border-t border-zinc-900 bg-zinc-950 py-4 sm:py-5 text-center text-xs text-zinc-400">
         <div className="max-w-[1640px] mx-auto px-4 sm:px-6 lg:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
           <div className="flex items-center gap-2">
             <Link
