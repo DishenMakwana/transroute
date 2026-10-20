@@ -432,14 +432,6 @@ export default function TransportModal({
                     <MapPin className="h-4 w-4 text-emerald-400" />
                     2. Offices & Pickup / Dropoff Points ({locations.length})
                   </h3>
-                  <button
-                    type="button"
-                    onClick={handleAddLocation}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 hover:text-orange-300 border border-orange-500/25 sm:border-0 sm:bg-transparent sm:p-0 cursor-pointer"
-                  >
-                    <Plus className="h-3.5 w-3.5" />
-                    <span>Add Another Point</span>
-                  </button>
                 </div>
 
                 <div className="space-y-3 sm:space-y-3.5">
@@ -683,14 +675,6 @@ export default function TransportModal({
                     <Package className="h-4 w-4 text-sky-400" />
                     3. Pricing & Freight Rate Cards ({pricing.length})
                   </h3>
-                  <button
-                    type="button"
-                    onClick={handleAddPricing}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 hover:text-orange-300 border border-orange-500/25 sm:border-0 sm:bg-transparent sm:p-0 cursor-pointer"
-                  >
-                    <Plus className="h-3.5 w-3.5" />
-                    <span>Add Another Rate</span>
-                  </button>
                 </div>
 
                 <div className="space-y-3">
