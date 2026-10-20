@@ -61,9 +61,9 @@ function CustomAnalyticsTooltip({
 }: CustomTooltipProps) {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-zinc-900/95 backdrop-blur-md text-white p-3 rounded-xl border border-zinc-700 shadow-2xl text-xs space-y-1.5 min-w-[170px]">
+      <div className="bg-zinc-950/95 backdrop-blur-xl text-white p-3 rounded-xl border border-zinc-800 shadow-[0_12px_32px_rgba(0,0,0,0.85)] text-xs space-y-2 min-w-[175px]">
         {label && (
-          <div className="font-bold text-zinc-200 border-b border-zinc-800 pb-1">
+          <div className="font-bold text-zinc-200 border-b border-zinc-800/90 pb-1.5 text-xs tracking-tight">
             {label}
           </div>
         )}
@@ -74,7 +74,7 @@ function CustomAnalyticsTooltip({
           >
             <span className="flex items-center gap-1.5 text-zinc-300">
               <span
-                className="h-2 w-2 rounded-full"
+                className="h-2 w-2 rounded-full shrink-0 shadow-sm"
                 style={{ backgroundColor: entry.color }}
               />
               <span>{entry.name}:</span>
@@ -126,32 +126,35 @@ function KpiCard({
 
   return (
     <div
-      className={`group relative overflow-hidden rounded-2xl bg-gradient-to-b ${glowGradients[accentColor]} bg-zinc-900/85 p-3.5 sm:p-4 lg:p-5 border border-zinc-800/90 shadow-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl hover:border-zinc-700/80 backdrop-blur-sm ${className}`}
+      className={`group relative overflow-hidden rounded-2xl bg-gradient-to-b ${glowGradients[accentColor]} bg-zinc-900/85 p-3.5 sm:p-4 lg:p-5 border border-zinc-800/90 shadow-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl hover:border-zinc-700/80 backdrop-blur-sm flex flex-col justify-between ${className}`}
     >
-      <div className="flex items-start justify-between gap-2">
-        <div
-          className={`p-2 sm:p-2.5 rounded-xl border transition-colors ${accentClasses[accentColor]}`}
-        >
-          {icon}
+      <div>
+        <div className="flex items-start justify-between gap-2">
+          <div
+            className={`p-2 sm:p-2.5 rounded-xl border transition-colors ${accentClasses[accentColor]}`}
+          >
+            {icon}
+          </div>
+          {badge && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-zinc-800/80 px-2 py-0.5 text-[9px] sm:text-[10px] font-semibold text-zinc-300 border border-zinc-700/60 truncate">
+              {badge}
+            </span>
+          )}
         </div>
-        {badge && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-zinc-800/80 px-2 py-0.5 text-[9px] sm:text-[10px] font-semibold text-zinc-300 border border-zinc-700/60 truncate">
-            {badge}
-          </span>
-        )}
+
+        <div className="mt-3 sm:mt-4">
+          <p className="text-[11px] sm:text-xs font-semibold text-zinc-400 uppercase tracking-wider truncate">
+            {title}
+          </p>
+          <div className="mt-1 text-lg sm:text-2xl font-bold tracking-tight text-white font-mono leading-snug break-words">
+            {value}
+          </div>
+        </div>
       </div>
 
-      <div className="mt-3 sm:mt-4">
-        <p className="text-[11px] sm:text-xs font-semibold text-zinc-400 uppercase tracking-wider truncate">
-          {title}
-        </p>
-        <p className="mt-1 text-lg sm:text-2xl font-bold tracking-tight text-white font-mono truncate">
-          {value}
-        </p>
-        <p className="mt-0.5 sm:mt-1 text-[10px] sm:text-[11px] text-zinc-400 truncate">
-          {subtext}
-        </p>
-      </div>
+      <p className="mt-2 text-[10px] sm:text-[11px] text-zinc-400 truncate">
+        {subtext}
+      </p>
     </div>
   );
 }
@@ -406,9 +409,9 @@ export default function AnalyticsPage() {
 
             <div className="h-4 w-px bg-zinc-800 hidden md:block" />
 
-            <div className="flex items-center gap-2 min-w-0">
+            <div className="hidden md:flex items-center gap-2 min-w-0">
               <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-              <span className="text-xs font-bold uppercase tracking-wider text-zinc-400 truncate hidden md:inline">
+              <span className="text-xs font-bold uppercase tracking-wider text-zinc-400 truncate">
                 Live Freight Intelligence & Market Benchmarks
               </span>
             </div>
@@ -541,7 +544,19 @@ export default function AnalyticsPage() {
           />
           <KpiCard
             title="Top Corridor"
-            value={analytics?.corridorBenchmarks?.[0]?.corridor || "—"}
+            value={
+              analytics?.corridorBenchmarks?.[0] ? (
+                <span className="block leading-snug">
+                  <span>{analytics.corridorBenchmarks[0].origin}</span>
+                  <span className="text-cyan-400 mx-1">⇄</span>
+                  <span className="block text-base sm:text-lg lg:text-base xl:text-lg font-semibold text-zinc-200">
+                    {analytics.corridorBenchmarks[0].destination}
+                  </span>
+                </span>
+              ) : (
+                "—"
+              )
+            }
             subtext={
               analytics?.corridorBenchmarks?.[0]
                 ? `${analytics.corridorBenchmarks[0].origin} to ${analytics.corridorBenchmarks[0].destination}`
@@ -550,7 +565,6 @@ export default function AnalyticsPage() {
             icon={<Activity className="h-4 w-4 sm:h-5 sm:w-5" />}
             badge="Top Density"
             accentColor="cyan"
-            className="col-span-2 sm:col-span-1"
           />
         </div>
 
@@ -651,11 +665,11 @@ export default function AnalyticsPage() {
               </span>
             </div>
 
-            <div className="h-64 sm:h-80 w-full mt-2">
+            <div className="h-72 sm:h-80 w-full mt-2">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={carrierComparisonData}
-                  margin={{ top: 15, right: 10, left: -10, bottom: 25 }}
+                  margin={{ top: 10, right: 10, left: -10, bottom: 5 }}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
@@ -664,20 +678,34 @@ export default function AnalyticsPage() {
                   />
                   <XAxis
                     dataKey="name"
+                    height={55}
                     tick={{ fontSize: 9, fill: "#a1a1aa" }}
                     interval={0}
-                    angle={-22}
+                    angle={-25}
                     textAnchor="end"
+                    tickFormatter={(val: string) =>
+                      val.length > 16 ? `${val.slice(0, 15)}…` : val
+                    }
                   />
                   <YAxis
                     tick={{ fontSize: 9, fill: "#a1a1aa" }}
                     unit="₹"
                     stroke="#52525b"
                   />
-                  <Tooltip content={<CustomAnalyticsTooltip />} />
+                  <Tooltip
+                    content={<CustomAnalyticsTooltip />}
+                    cursor={{
+                      fill: "rgba(39, 39, 42, 0.5)",
+                      stroke: "rgba(63, 63, 70, 0.4)",
+                      strokeWidth: 1,
+                      rx: 8,
+                    }}
+                  />
                   <Legend
+                    verticalAlign="top"
+                    align="right"
                     wrapperStyle={{
-                      paddingTop: "10px",
+                      paddingBottom: "12px",
                       fontSize: "11px",
                       color: "#d4d4d8",
                     }}
@@ -688,12 +716,22 @@ export default function AnalyticsPage() {
                     fill="#f97316"
                     radius={[4, 4, 0, 0]}
                     maxBarSize={32}
+                    activeBar={{
+                      fill: "#fb923c",
+                      stroke: "#fed7aa",
+                      strokeWidth: 1,
+                    }}
                   />
                   <Bar
                     dataKey="Medium Box Rate (₹)"
                     fill="#10b981"
                     radius={[4, 4, 0, 0]}
                     maxBarSize={32}
+                    activeBar={{
+                      fill: "#34d399",
+                      stroke: "#a7f3d0",
+                      strokeWidth: 1,
+                    }}
                   />
                 </BarChart>
               </ResponsiveContainer>
@@ -720,11 +758,11 @@ export default function AnalyticsPage() {
               </span>
             </div>
 
-            <div className="h-64 sm:h-80 w-full mt-2">
+            <div className="h-72 sm:h-80 w-full mt-2">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={filteredCityData}
-                  margin={{ top: 15, right: 10, left: -10, bottom: 25 }}
+                  margin={{ top: 10, right: 10, left: -10, bottom: 5 }}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
@@ -733,19 +771,33 @@ export default function AnalyticsPage() {
                   />
                   <XAxis
                     dataKey="city"
+                    height={50}
                     tick={{ fontSize: 9, fill: "#a1a1aa" }}
                     interval={0}
-                    angle={-22}
+                    angle={-25}
                     textAnchor="end"
+                    tickFormatter={(val: string) =>
+                      val.length > 14 ? `${val.slice(0, 13)}…` : val
+                    }
                   />
                   <YAxis
                     tick={{ fontSize: 9, fill: "#a1a1aa" }}
                     stroke="#52525b"
                   />
-                  <Tooltip content={<CustomAnalyticsTooltip />} />
+                  <Tooltip
+                    content={<CustomAnalyticsTooltip />}
+                    cursor={{
+                      fill: "rgba(39, 39, 42, 0.5)",
+                      stroke: "rgba(63, 63, 70, 0.4)",
+                      strokeWidth: 1,
+                      rx: 8,
+                    }}
+                  />
                   <Legend
+                    verticalAlign="top"
+                    align="right"
                     wrapperStyle={{
-                      paddingTop: "10px",
+                      paddingBottom: "12px",
                       fontSize: "11px",
                       color: "#d4d4d8",
                     }}
@@ -756,12 +808,22 @@ export default function AnalyticsPage() {
                     fill="#3b82f6"
                     radius={[4, 4, 0, 0]}
                     maxBarSize={32}
+                    activeBar={{
+                      fill: "#60a5fa",
+                      stroke: "#bfdbfe",
+                      strokeWidth: 1,
+                    }}
                   />
                   <Bar
                     dataKey="Transporter Operators"
                     fill="#a855f7"
                     radius={[4, 4, 0, 0]}
                     maxBarSize={32}
+                    activeBar={{
+                      fill: "#c084fc",
+                      stroke: "#e9d5ff",
+                      strokeWidth: 1,
+                    }}
                   />
                 </BarChart>
               </ResponsiveContainer>
@@ -860,11 +922,11 @@ export default function AnalyticsPage() {
               </span>
             </div>
 
-            <div className="h-64 sm:h-80 w-full mt-2">
+            <div className="h-72 sm:h-80 w-full mt-2">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                   data={stateVolumeData}
-                  margin={{ top: 15, right: 10, left: -10, bottom: 20 }}
+                  margin={{ top: 10, right: 10, left: -10, bottom: 5 }}
                 >
                   <defs>
                     <linearGradient
@@ -895,22 +957,36 @@ export default function AnalyticsPage() {
                   />
                   <XAxis
                     dataKey="state"
+                    height={45}
                     tick={{ fontSize: 9, fill: "#a1a1aa" }}
                     interval={0}
-                    angle={-15}
+                    angle={-20}
                     textAnchor="end"
+                    tickFormatter={(val: string) =>
+                      val.length > 14 ? `${val.slice(0, 13)}…` : val
+                    }
                   />
                   <YAxis
                     tick={{ fontSize: 9, fill: "#a1a1aa" }}
                     stroke="#52525b"
                   />
-                  <Tooltip content={<CustomAnalyticsTooltip />} />
+                  <Tooltip
+                    content={<CustomAnalyticsTooltip />}
+                    cursor={{
+                      stroke: "#52525b",
+                      strokeWidth: 1.5,
+                      strokeDasharray: "4 4",
+                    }}
+                  />
                   <Legend
+                    verticalAlign="top"
+                    align="right"
                     wrapperStyle={{
-                      paddingTop: "10px",
+                      paddingBottom: "12px",
                       fontSize: "11px",
                       color: "#d4d4d8",
                     }}
+                    iconType="circle"
                   />
                   <Area
                     type="monotone"
@@ -954,53 +1030,55 @@ export default function AnalyticsPage() {
             {analytics?.corridorBenchmarks.map((corridor) => (
               <div
                 key={corridor.corridor}
-                className="group rounded-2xl bg-gradient-to-br from-zinc-900/90 via-zinc-900/80 to-zinc-950/90 p-4 sm:p-5 border border-zinc-800/90 hover:border-orange-500/40 transition-all duration-300 shadow-xl backdrop-blur-sm hover:-translate-y-0.5 flex flex-col justify-between"
+                className="group relative rounded-2xl bg-gradient-to-br from-zinc-900/90 via-zinc-900/80 to-zinc-950/90 p-4 sm:p-5 border border-zinc-800/90 hover:border-orange-500/40 transition-all duration-300 shadow-xl hover:shadow-orange-500/5 backdrop-blur-sm hover:-translate-y-0.5 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-start justify-between gap-2">
-                    <div className="space-y-1 min-w-0">
-                      <span className="inline-flex items-center gap-1 rounded-md bg-orange-500/10 px-2 py-0.5 text-[10px] font-mono font-semibold text-orange-400 border border-orange-500/20">
+                    <div className="space-y-1.5 min-w-0">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-orange-500/10 px-2.5 py-0.5 text-[10px] font-mono font-semibold text-orange-400 border border-orange-500/20">
+                        <span className="h-1.5 w-1.5 rounded-full bg-orange-400 animate-pulse" />
                         Lane Benchmark
                       </span>
-                      <h4 className="text-sm font-bold text-white group-hover:text-orange-300 transition-colors truncate">
+                      <h4 className="text-sm sm:text-base font-bold text-white group-hover:text-orange-300 transition-colors tracking-tight truncate">
                         {corridor.corridor}
                       </h4>
                     </div>
-                    <div className="p-1.5 sm:p-2 rounded-xl bg-zinc-800/60 text-zinc-400 group-hover:text-orange-400 group-hover:bg-orange-500/10 transition-colors shrink-0">
+                    <div className="p-1.5 sm:p-2 rounded-xl bg-zinc-800/60 text-zinc-400 group-hover:text-orange-400 group-hover:bg-orange-500/10 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 shrink-0">
                       <ArrowUpRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </div>
                   </div>
 
-                  <div className="mt-3.5 grid grid-cols-3 gap-1.5 sm:gap-2 py-2.5 sm:py-3 px-3 sm:px-3.5 bg-zinc-950/80 rounded-xl border border-zinc-800/80">
-                    <div>
-                      <span className="block text-[9px] sm:text-[10px] text-zinc-400 uppercase font-semibold">
+                  {/* 3-Value Stats Grid: Left-most, Center, Right-most */}
+                  <div className="mt-3.5 grid grid-cols-3 items-center py-2.5 sm:py-3 px-3 sm:px-4 bg-zinc-950/75 rounded-xl border border-zinc-800/80 shadow-inner">
+                    <div className="text-left flex flex-col items-start">
+                      <span className="block text-[9px] sm:text-[10px] text-zinc-400 uppercase font-semibold tracking-wider">
                         Carriers
                       </span>
-                      <span className="font-mono text-[11px] sm:text-xs font-bold text-zinc-200">
+                      <span className="font-mono text-xs sm:text-sm font-bold text-zinc-200 mt-0.5">
                         {corridor.carriersCount} Active
                       </span>
                     </div>
-                    <div>
-                      <span className="block text-[9px] sm:text-[10px] text-zinc-400 uppercase font-semibold">
+                    <div className="text-center flex flex-col items-center">
+                      <span className="block text-[9px] sm:text-[10px] text-zinc-400 uppercase font-semibold tracking-wider">
                         Min / Kg
                       </span>
-                      <span className="font-mono text-[11px] sm:text-xs font-bold text-emerald-400">
+                      <span className="font-mono text-xs sm:text-sm font-bold text-emerald-400 mt-0.5">
                         ₹{corridor.minPerKg}
                       </span>
                     </div>
-                    <div>
-                      <span className="block text-[9px] sm:text-[10px] text-zinc-400 uppercase font-semibold">
+                    <div className="text-right flex flex-col items-end">
+                      <span className="block text-[9px] sm:text-[10px] text-zinc-400 uppercase font-semibold tracking-wider">
                         Min Box
                       </span>
-                      <span className="font-mono text-[11px] sm:text-xs font-bold text-orange-400">
+                      <span className="font-mono text-xs sm:text-sm font-bold text-orange-400 mt-0.5">
                         ₹{corridor.minBoxRate}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-3 pt-2.5 border-t border-zinc-800/60 flex items-center justify-between text-[11px] text-zinc-400">
-                  <span className="flex items-center gap-1 truncate font-medium">
+                <div className="mt-3 pt-2.5 border-t border-zinc-800/70 flex items-center justify-between text-[11px] text-zinc-400">
+                  <span className="inline-flex items-center gap-1.5 truncate font-medium text-zinc-300">
                     <MapPin className="h-3 w-3 text-orange-400 shrink-0" />
                     <span className="truncate">
                       {corridor.origin} → {corridor.destination}

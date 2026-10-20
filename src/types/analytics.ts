@@ -65,7 +65,7 @@ export interface AnalyticsFilterState {
 
 export interface AnalyticsKpiCardProps {
   title: string;
-  value: string | number;
+  value: React.ReactNode;
   subtext: string;
   icon: React.ReactNode;
   badge?: string;

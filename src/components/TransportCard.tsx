@@ -171,7 +171,7 @@ export default function TransportCard({ transport }: TransportCardProps) {
             <div className="flex-1 min-w-0">
               {/* Status Badges Row */}
               <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-zinc-950 text-zinc-300 border border-zinc-800">
+                <span className="hidden sm:inline-block text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-zinc-950 text-zinc-300 border border-zinc-800">
                   #{transport.id}
                 </span>
 
@@ -435,58 +435,53 @@ export default function TransportCard({ transport }: TransportCardProps) {
               >
                 {/* Hub Details Header */}
                 <div className="min-w-0">
-                  <div className="flex items-center justify-between gap-1.5 flex-wrap">
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      <div
-                        className={`p-1 rounded-md shrink-0 ${
-                          isDestMatch
-                            ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/50"
-                            : isOrigMatch
-                              ? "bg-orange-500/20 text-orange-400 border border-orange-500/50"
-                              : isOffice
-                                ? "bg-sky-950/60 text-sky-400 border border-sky-850"
-                                : "bg-zinc-800 text-zinc-400 border border-zinc-700/60"
-                        }`}
-                      >
-                        {isOffice ? (
-                          <Building2 className="h-3 w-3" />
-                        ) : (
-                          <MapPin className="h-3 w-3" />
-                        )}
-                      </div>
-                      <span
-                        className="font-bold text-xs sm:text-sm text-zinc-200 truncate"
-                        title={loc.name}
-                      >
-                        {loc.name}
-                      </span>
+                  <div className="flex items-start gap-1.5 min-w-0">
+                    <div
+                      className={`p-1 rounded-md shrink-0 mt-0.5 ${
+                        isDestMatch
+                          ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/50"
+                          : isOrigMatch
+                            ? "bg-orange-500/20 text-orange-400 border border-orange-500/50"
+                            : isOffice
+                              ? "bg-sky-950/60 text-sky-400 border border-sky-850"
+                              : "bg-zinc-800 text-zinc-400 border border-zinc-700/60"
+                      }`}
+                    >
+                      {isOffice ? (
+                        <Building2 className="h-3 w-3" />
+                      ) : (
+                        <MapPin className="h-3 w-3" />
+                      )}
                     </div>
-
-                    <span className="text-[9px] font-medium px-1.5 py-0.2 rounded bg-zinc-800/90 text-zinc-400 border border-zinc-750 shrink-0">
-                      {loc.locationType.replace(/_/g, " ")}
+                    <span
+                      className="font-bold text-xs sm:text-sm text-zinc-200 leading-snug break-words"
+                      title={loc.name}
+                    >
+                      {loc.name}
                     </span>
                   </div>
 
-                  {/* Origin / Destination Indicator Badge */}
-                  {(isOrigMatch || isDestMatch) && (
-                    <div className="mt-1">
-                      {isOrigMatch && (
-                        <span className="inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400 border border-orange-500/40">
-                          <MapPin className="h-2.5 w-2.5 text-orange-400 shrink-0" />
-                          <span>Origin Hub</span>
-                        </span>
-                      )}
-                      {isDestMatch && (
-                        <span className="inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
-                          <MapPin className="h-2.5 w-2.5 text-emerald-400 shrink-0" />
-                          <span>Destination Hub</span>
-                        </span>
-                      )}
-                    </div>
-                  )}
+                  {/* Location Type & Origin / Destination Indicator Badges */}
+                  <div className="mt-1.5 flex items-center gap-1.5 flex-wrap">
+                    <span className="text-[9px] font-medium px-1.5 py-0.5 rounded bg-zinc-800/90 text-zinc-400 border border-zinc-750 shrink-0">
+                      {loc.locationType.replace(/_/g, " ")}
+                    </span>
+                    {isOrigMatch && (
+                      <span className="inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400 border border-orange-500/40 shrink-0">
+                        <MapPin className="h-2.5 w-2.5 text-orange-400 shrink-0" />
+                        <span>Origin Hub</span>
+                      </span>
+                    )}
+                    {isDestMatch && (
+                      <span className="inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shrink-0">
+                        <MapPin className="h-2.5 w-2.5 text-emerald-400 shrink-0" />
+                        <span>Destination Hub</span>
+                      </span>
+                    )}
+                  </div>
 
                   {/* Hub Address */}
-                  <p className="text-[10px] sm:text-[11px] text-zinc-400 mt-1 leading-snug line-clamp-2">
+                  <p className="text-[10px] sm:text-[11px] text-zinc-400 mt-1 leading-snug break-words">
                     {loc.address}, {loc.city} -{" "}
                     <span className="font-mono text-zinc-300">
                       {formatPinCode(loc.pinCode)}
