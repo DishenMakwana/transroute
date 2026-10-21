@@ -42,6 +42,7 @@ export interface SearchBarProps {
   availableLocations?: LocationSuggestion[];
   onOpenFilterModal?: () => void;
   activeFilterCount?: number;
+  isLoading?: boolean;
 }
 
 export interface CitySearchInputProps {

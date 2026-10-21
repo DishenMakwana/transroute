@@ -542,3 +542,108 @@ export default function TransportCard({ transport }: TransportCardProps) {
     </div>
   );
 }
+
+export function TransportCardSkeleton() {
+  return (
+    <div className="rounded-2xl border border-zinc-850 bg-gradient-to-b from-zinc-900 via-zinc-900/90 to-zinc-950 overflow-hidden shadow-xl animate-pulse">
+      {/* Carrier Core Header */}
+      <div className="p-4 sm:p-5 bg-gradient-to-b from-zinc-900/90 to-zinc-900/40">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
+          <div className="flex items-start gap-3 sm:gap-4 min-w-0 flex-1">
+            {/* Avatar skeleton */}
+            <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-zinc-800/80 border border-zinc-750/60 shrink-0" />
+
+            {/* Badges, Name & GSTIN */}
+            <div className="min-w-0 flex-1 space-y-2">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <div className="h-5 w-7 rounded-md bg-zinc-800/80 border border-zinc-750/50" />
+                <div className="h-5 w-16 rounded-full bg-zinc-800/80 border border-zinc-750/50" />
+                <div className="h-5 w-20 rounded-full bg-zinc-800/80 border border-zinc-750/50" />
+              </div>
+
+              {/* Carrier Name */}
+              <div className="h-5 sm:h-6 w-3/5 max-w-[280px] rounded-md bg-zinc-800" />
+
+              {/* GSTIN */}
+              <div className="h-3.5 w-36 rounded bg-zinc-850" />
+            </div>
+          </div>
+
+          {/* Action CTAs */}
+          <div className="grid grid-cols-2 gap-2 w-full mt-3 sm:mt-0 sm:flex sm:w-auto sm:self-start sm:items-center sm:gap-2 shrink-0">
+            <div className="h-9 sm:h-8 w-full sm:w-24 rounded-xl bg-zinc-850 border border-zinc-750/60" />
+            <div className="h-9 sm:h-8 w-full sm:w-24 rounded-xl bg-zinc-800 border border-zinc-700/60" />
+          </div>
+        </div>
+
+        {/* Elevated Freight Rates Strip */}
+        <div className="mt-3 p-2.5 rounded-xl bg-zinc-950/70 border border-zinc-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5">
+            <div className="h-3.5 w-3.5 rounded bg-zinc-800 shrink-0" />
+            <div className="h-3 w-20 rounded bg-zinc-800" />
+          </div>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <div className="h-6 w-20 rounded-md bg-zinc-900 border border-zinc-750" />
+            <div className="h-6 w-28 rounded-md bg-zinc-900 border border-zinc-750" />
+            <div className="h-6 w-24 rounded-md bg-zinc-900 border border-zinc-750" />
+          </div>
+        </div>
+      </div>
+
+      {/* Facilities & Hubs Presence */}
+      <div className="p-3.5 sm:p-4 bg-zinc-950/70 border-t border-zinc-800/80 text-xs space-y-2.5">
+        {/* Coverage Cities Strip */}
+        <div className="flex items-center gap-1.5 overflow-hidden py-0.5">
+          <div className="h-3.5 w-16 rounded bg-zinc-800 shrink-0" />
+          <div className="h-5 w-16 rounded-md bg-zinc-900 border border-zinc-800 shrink-0" />
+          <div className="h-5 w-14 rounded-md bg-zinc-900 border border-zinc-800 shrink-0" />
+          <div className="h-5 w-12 rounded-md bg-zinc-900 border border-zinc-800 shrink-0" />
+          <div className="h-5 w-16 rounded-md bg-zinc-900 border border-zinc-800 shrink-0" />
+        </div>
+
+        {/* Tab Filters and Header */}
+        <div className="flex items-center justify-between gap-2 pt-1 border-t border-zinc-850/80">
+          <div className="h-7 w-48 rounded-lg bg-zinc-900 border border-zinc-800" />
+          <div className="h-3.5 w-20 rounded bg-zinc-850" />
+        </div>
+
+        {/* Rendered Hub List: Side-by-Side Dual Hub Grid */}
+        <div className="grid gap-2 sm:gap-2.5 grid-cols-2">
+          {/* Sub-card 1 */}
+          <div className="p-2.5 sm:p-3 rounded-xl bg-zinc-900/90 border border-zinc-800/80 shadow-inner flex flex-col justify-between h-36">
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-1.5">
+                <div className="h-5 w-5 rounded-md bg-zinc-800 shrink-0" />
+                <div className="h-4 w-40 sm:w-48 rounded bg-zinc-800" />
+              </div>
+              <div className="h-3.5 w-14 rounded bg-zinc-800/90" />
+              <div className="h-3 w-4/5 rounded bg-zinc-850" />
+              <div className="h-3 w-32 rounded bg-zinc-850" />
+            </div>
+            <div className="grid grid-cols-2 gap-1.5 pt-2 border-t border-zinc-800/70">
+              <div className="h-7 rounded-lg bg-zinc-800 border border-zinc-750" />
+              <div className="h-7 rounded-lg bg-zinc-800 border border-zinc-750" />
+            </div>
+          </div>
+
+          {/* Sub-card 2 */}
+          <div className="p-2.5 sm:p-3 rounded-xl bg-zinc-900/90 border border-zinc-800/80 shadow-inner flex flex-col justify-between h-36">
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-1.5">
+                <div className="h-5 w-5 rounded-md bg-zinc-800 shrink-0" />
+                <div className="h-4 w-36 sm:w-44 rounded bg-zinc-800" />
+              </div>
+              <div className="h-3.5 w-20 rounded bg-zinc-800/90" />
+              <div className="h-3 w-3/4 rounded bg-zinc-850" />
+              <div className="h-3 w-28 rounded bg-zinc-850" />
+            </div>
+            <div className="grid grid-cols-2 gap-1.5 pt-2 border-t border-zinc-800/70">
+              <div className="h-7 rounded-lg bg-zinc-800 border border-zinc-750" />
+              <div className="h-7 rounded-lg bg-zinc-800 border border-zinc-750" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

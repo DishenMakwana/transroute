@@ -93,3 +93,32 @@ export default function Header({
     </header>
   );
 }
+
+export function HeaderSkeleton() {
+  return (
+    <header className="border-b border-zinc-800/80 bg-zinc-950/85 backdrop-blur-md sticky top-0 z-30 shadow-2xl animate-pulse">
+      <div className="max-w-[1640px] mx-auto px-3.5 sm:px-6 lg:px-6 py-2.5 sm:py-3.5">
+        <div className="flex items-center justify-between gap-3">
+          {/* Logo & Branding */}
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <div className="h-9 w-9 sm:h-11 sm:w-11 rounded-xl bg-zinc-850 border border-zinc-750/80 shrink-0" />
+            <div className="min-w-0 space-y-1">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <div className="h-5 sm:h-6 w-24 sm:w-28 rounded-md bg-zinc-800" />
+                <div className="h-4 w-11 rounded-full bg-zinc-850 border border-zinc-750/50" />
+              </div>
+              <div className="h-3 w-56 sm:w-72 rounded bg-zinc-850 hidden md:block" />
+            </div>
+          </div>
+
+          {/* Action CTAs: Search, Export, Add */}
+          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+            <div className="h-9 w-9 sm:w-24 rounded-xl bg-zinc-900 border border-zinc-750/60" />
+            <div className="h-9 w-9 sm:w-20 rounded-xl bg-zinc-900 border border-zinc-750/60" />
+            <div className="h-9 w-16 sm:w-36 rounded-xl bg-orange-950/40 border border-orange-850/60" />
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}

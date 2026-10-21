@@ -14,7 +14,7 @@ import {
   Scale,
 } from "lucide-react";
 import { TransportListProps } from "@/types";
-import TransportCard from "./TransportCard";
+import TransportCard, { TransportCardSkeleton } from "./TransportCard";
 import Pagination from "./Pagination";
 import { FACILITY_OPTIONS } from "./FilterModal";
 import {
@@ -95,10 +95,7 @@ export default function TransportList({
     return (
       <div className="mt-4 space-y-4">
         {[1, 2, 3].map((n) => (
-          <div
-            key={n}
-            className="h-32 bg-zinc-900 rounded-2xl border border-zinc-800 animate-pulse p-6"
-          />
+          <TransportCardSkeleton key={n} />
         ))}
       </div>
     );

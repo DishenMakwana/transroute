@@ -15,6 +15,7 @@ export default function SearchBar({
   availableLocations,
   onOpenFilterModal,
   activeFilterCount = 0,
+  isLoading = false,
 }: SearchBarProps) {
   const hasActiveQuery = Boolean(source || destination);
 
@@ -145,6 +146,19 @@ export default function SearchBar({
               );
             })}
           </div>
+        ) : isLoading || availableCities.length === 0 ? (
+          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1 overflow-hidden py-0.5 animate-pulse">
+            <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider shrink-0 hidden sm:inline">
+              Popular Trade Corridors:
+            </span>
+            <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider shrink-0 sm:hidden">
+              Routes:
+            </span>
+            <div className="h-6 w-24 sm:w-28 rounded-lg bg-zinc-800/90 border border-zinc-750/50 shrink-0" />
+            <div className="h-6 w-28 sm:w-32 rounded-lg bg-zinc-800/90 border border-zinc-750/50 shrink-0" />
+            <div className="h-6 w-24 sm:w-28 rounded-lg bg-zinc-800/90 border border-zinc-750/50 shrink-0" />
+            <div className="h-6 w-28 sm:w-32 rounded-lg bg-zinc-800/90 border border-zinc-750/50 shrink-0 hidden md:block" />
+          </div>
         ) : (
           <div />
         )}
@@ -168,6 +182,56 @@ export default function SearchBar({
             )}
           </button>
         )}
+      </div>
+    </div>
+  );
+}
+
+export function SearchBarSkeleton() {
+  return (
+    <div className="relative z-40 bg-zinc-900/90 rounded-2xl p-3.5 sm:p-4.5 border border-zinc-800/90 shadow-2xl backdrop-blur-sm animate-pulse">
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-2.5 sm:gap-3">
+        {/* Origin Input Skeleton */}
+        <div className="flex-1 min-w-0 space-y-1.5">
+          <div className="flex items-center gap-1.5">
+            <div className="h-2 w-2 rounded-full bg-orange-500/50" />
+            <div className="h-3 w-36 rounded bg-zinc-800" />
+          </div>
+          <div className="h-11 rounded-xl bg-zinc-950 border border-zinc-800 px-3 flex items-center gap-2">
+            <div className="h-4 w-4 rounded bg-zinc-800" />
+            <div className="h-3 w-48 rounded bg-zinc-850" />
+          </div>
+        </div>
+
+        {/* Swap Action Skeleton */}
+        <div className="relative flex items-center justify-center -my-1 lg:my-0 lg:pt-5 z-10 shrink-0">
+          <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-full border border-zinc-750 bg-zinc-950" />
+        </div>
+
+        {/* Destination Input Skeleton */}
+        <div className="flex-1 min-w-0 space-y-1.5">
+          <div className="flex items-center gap-1.5">
+            <div className="h-2 w-2 rounded-full bg-emerald-500/50" />
+            <div className="h-3 w-44 rounded bg-zinc-800" />
+          </div>
+          <div className="h-11 rounded-xl bg-zinc-950 border border-zinc-800 px-3 flex items-center gap-2">
+            <div className="h-4 w-4 rounded bg-zinc-800" />
+            <div className="h-3 w-52 rounded bg-zinc-850" />
+          </div>
+        </div>
+      </div>
+
+      {/* Trade Corridor Shortcut Chips & Filter button */}
+      <div className="mt-3 pt-2.5 border-t border-zinc-800/80 flex items-center justify-between gap-2.5">
+        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1 overflow-hidden py-0.5">
+          <div className="h-3 w-32 rounded bg-zinc-800 shrink-0 hidden sm:block" />
+          <div className="h-6 w-28 rounded-lg bg-zinc-800/90 border border-zinc-750/50 shrink-0" />
+          <div className="h-6 w-32 rounded-lg bg-zinc-800/90 border border-zinc-750/50 shrink-0" />
+          <div className="h-6 w-28 rounded-lg bg-zinc-800/90 border border-zinc-750/50 shrink-0" />
+          <div className="h-6 w-32 rounded-lg bg-zinc-800/90 border border-zinc-750/50 shrink-0 hidden md:block" />
+        </div>
+
+        <div className="h-8 w-20 rounded-xl bg-zinc-950 border border-zinc-800 shrink-0" />
       </div>
     </div>
   );

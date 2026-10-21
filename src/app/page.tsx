@@ -13,12 +13,13 @@ import {
   Map as MapIcon,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import Header from "@/components/Header";
-import SearchBar from "@/components/SearchBar";
+import Header, { HeaderSkeleton } from "@/components/Header";
+import SearchBar, { SearchBarSkeleton } from "@/components/SearchBar";
 import FilterModal from "@/components/FilterModal";
 import TransportList from "@/components/TransportList";
 import TransportModal from "@/components/TransportModal";
 import UniversalSearchModal from "@/components/UniversalSearchModal";
+import { TransportCardSkeleton } from "@/components/TransportCard";
 import {
   TransportWithDetails,
   SearchFilters,
@@ -370,6 +371,21 @@ function HomePageContent() {
     return count;
   }, [filters]);
 
+  const bentoMetrics = useMemo(() => {
+    if (!analytics) return null;
+    const kgDist = analytics.rateDistributions?.find((r) => r.unit === "kg");
+    const tariffSpreadStr = kgDist
+      ? `₹${kgDist.minRate} - ₹${kgDist.maxRate} / kg`
+      : "₹6.5 - ₹14 / kg";
+
+    return {
+      interstateCorridors: `${analytics.corridorBenchmarks?.length ?? 50}+ Active Lanes`,
+      tariffSpreads: tariffSpreadStr,
+      hubNetwork: `${analytics.totalHubs} Offices & Godowns`,
+      stateDepth: `${analytics.statesCount || analytics.stateCoverage?.length || 12}+ States Covered`,
+    };
+  }, [analytics]);
+
   const handleOpenAdd = () => {
     setIsModalOpen(true);
   };
@@ -456,6 +472,7 @@ function HomePageContent() {
           availableLocations={availableLocations}
           onOpenFilterModal={() => setIsFilterModalOpen(true)}
           activeFilterCount={activeFilterCount}
+          isLoading={isLoading}
         />
 
         {/* Results Feed with integrated compact filter & sort toolbar */}
@@ -528,7 +545,11 @@ function HomePageContent() {
                       Interstate Corridors
                     </div>
                     <div className="text-xs sm:text-sm font-bold text-zinc-100 tracking-tight truncate">
-                      50+ Active Lanes
+                      {bentoMetrics ? (
+                        bentoMetrics.interstateCorridors
+                      ) : (
+                        <span className="inline-block h-3.5 w-20 rounded bg-zinc-800 animate-pulse mt-0.5" />
+                      )}
                     </div>
                   </div>
                 </div>
@@ -549,7 +570,11 @@ function HomePageContent() {
                       Tariff Spreads
                     </div>
                     <div className="text-xs sm:text-sm font-bold text-zinc-100 tracking-tight truncate">
-                      ₹6.5 - ₹14 / kg
+                      {bentoMetrics ? (
+                        bentoMetrics.tariffSpreads
+                      ) : (
+                        <span className="inline-block h-3.5 w-24 rounded bg-zinc-800 animate-pulse mt-0.5" />
+                      )}
                     </div>
                   </div>
                 </div>
@@ -570,7 +595,11 @@ function HomePageContent() {
                       Hub Network
                     </div>
                     <div className="text-xs sm:text-sm font-bold text-zinc-100 tracking-tight truncate">
-                      Offices & Godowns
+                      {bentoMetrics ? (
+                        bentoMetrics.hubNetwork
+                      ) : (
+                        <span className="inline-block h-3.5 w-24 rounded bg-zinc-800 animate-pulse mt-0.5" />
+                      )}
                     </div>
                   </div>
                 </div>
@@ -591,7 +620,11 @@ function HomePageContent() {
                       State Depth
                     </div>
                     <div className="text-xs sm:text-sm font-bold text-zinc-100 tracking-tight truncate">
-                      Multi-State Routes
+                      {bentoMetrics ? (
+                        bentoMetrics.stateDepth
+                      ) : (
+                        <span className="inline-block h-3.5 w-20 rounded bg-zinc-800 animate-pulse mt-0.5" />
+                      )}
                     </div>
                   </div>
                 </div>
@@ -667,13 +700,69 @@ function HomePageContent() {
 
 function HomePageSkeleton() {
   return (
-    <div className="min-h-screen flex flex-col bg-zinc-950 text-zinc-100 animate-pulse">
-      <div className="h-16 border-b border-zinc-800 bg-zinc-950" />
+    <div className="min-h-screen flex flex-col bg-zinc-950 text-zinc-100">
+      {/* Header Skeleton */}
+      <HeaderSkeleton />
+
+      {/* Main Content Area */}
       <main className="flex-1 max-w-[1640px] w-full mx-auto px-4 sm:px-6 lg:px-6 pt-4 sm:pt-6 pb-4 sm:pb-6 space-y-6">
-        <div className="h-32 rounded-2xl bg-zinc-900/60 border border-zinc-800/80" />
-        <div className="h-28 rounded-2xl bg-zinc-900/40 border border-zinc-800/80" />
-        <div className="h-96 rounded-2xl bg-zinc-900/30 border border-zinc-800/60" />
+        {/* Search Hero Skeleton */}
+        <SearchBarSkeleton />
+
+        {/* Results Toolbar Skeleton */}
+        <div className="h-10 rounded-xl bg-zinc-900/60 border border-zinc-800/80 animate-pulse" />
+
+        {/* Transport Cards Skeleton */}
+        <div className="space-y-4">
+          <TransportCardSkeleton />
+          <TransportCardSkeleton />
+        </div>
+
+        {/* Market Intelligence Hub Bento Skeleton */}
+        <section className="mt-6 sm:mt-7 rounded-2xl bg-gradient-to-br from-zinc-900/95 via-zinc-900/85 to-zinc-950 p-4 sm:p-5 lg:py-4 lg:px-6 border border-zinc-800/80 shadow-xl animate-pulse">
+          <div className="flex flex-col gap-3.5">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+              <div className="space-y-2 max-w-2xl">
+                <div className="h-5 w-36 rounded-full bg-zinc-850 border border-zinc-750/50" />
+                <div className="h-6 sm:h-7 w-72 sm:w-96 rounded-md bg-zinc-800" />
+                <div className="h-3.5 w-full max-w-lg rounded bg-zinc-850" />
+              </div>
+              <div className="hidden lg:block h-8 w-40 rounded-xl bg-zinc-850 shrink-0" />
+            </div>
+
+            {/* Bento Grid Skeleton */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5 pt-0.5">
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="p-2.5 sm:p-3 rounded-xl bg-zinc-950/60 border border-zinc-800/80 flex items-center justify-between gap-2"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="h-7 w-7 rounded-lg bg-zinc-850 shrink-0" />
+                    <div className="space-y-1 min-w-0">
+                      <div className="h-2.5 w-16 rounded bg-zinc-850" />
+                      <div className="h-3.5 w-24 rounded bg-zinc-800" />
+                    </div>
+                  </div>
+                  <div className="h-3.5 w-3.5 rounded bg-zinc-850 shrink-0" />
+                </div>
+              ))}
+            </div>
+
+            <div className="lg:hidden pt-0.5">
+              <div className="h-9 w-full rounded-xl bg-zinc-850" />
+            </div>
+          </div>
+        </section>
       </main>
+
+      {/* Footer Skeleton */}
+      <footer className="border-t border-zinc-900 bg-zinc-950/80 py-4 sm:py-5 text-center text-xs text-zinc-500 animate-pulse">
+        <div className="max-w-[1640px] mx-auto px-4 sm:px-6 lg:px-6 flex flex-col sm:flex-row items-center justify-between gap-2.5">
+          <div className="h-3.5 w-72 rounded bg-zinc-900 mx-auto sm:mx-0" />
+          <div className="h-3.5 w-48 rounded bg-zinc-900 mx-auto sm:mx-0" />
+        </div>
+      </footer>
     </div>
   );
 }
