@@ -159,6 +159,11 @@ function KpiCard({
   );
 }
 
+let analyticsPageClientCache: {
+  data: AnalyticsSummary;
+  timestamp: number;
+} | null = null;
+
 export default function AnalyticsPage() {
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -169,7 +174,18 @@ export default function AnalyticsPage() {
     selectedFacilityType: "all",
   });
 
-  const fetchAnalytics = useCallback(async () => {
+  const fetchAnalytics = useCallback(async (force = false) => {
+    const now = Date.now();
+    if (
+      !force &&
+      analyticsPageClientCache &&
+      now - analyticsPageClientCache.timestamp < 60_000
+    ) {
+      setAnalytics(analyticsPageClientCache.data);
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -180,6 +196,7 @@ export default function AnalyticsPage() {
         throw new Error("Failed to load analytics");
       }
       const data: AnalyticsSummary = await res.json();
+      analyticsPageClientCache = { data, timestamp: Date.now() };
       setAnalytics(data);
     } catch {
       toast.error("Failed to load analytics data");
@@ -204,6 +221,7 @@ export default function AnalyticsPage() {
 
       if (!res.ok) throw new Error("Failed to load analytics");
       const data: AnalyticsSummary = await res.json();
+      analyticsPageClientCache = { data, timestamp: Date.now() };
       setAnalytics(data);
       return data;
     })();

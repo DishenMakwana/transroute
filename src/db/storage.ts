@@ -15,13 +15,9 @@ import {
   CorridorRateComparison,
   CorridorBenchmark,
   LocationSuggestion,
+  CacheEntry,
 } from "@/types";
 import { checkIsOpenNow } from "@/helpers/formatters";
-
-interface CacheEntry<T> {
-  data: T;
-  expiresAt: number;
-}
 
 let transportsCache: CacheEntry<TransportWithDetails[]> | null = null;
 let analyticsCache: CacheEntry<AnalyticsSummary> | null = null;

@@ -134,3 +134,8 @@ export interface UniversalSearchModalProps {
   transports: TransportWithDetails[];
   onFilterDirectory?: (query: string) => void;
 }
+
+export interface CacheEntry<T> {
+  data: T;
+  expiresAt: number;
+}

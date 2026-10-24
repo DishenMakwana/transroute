@@ -1,6 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback, Suspense, useMemo } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  Suspense,
+  useMemo,
+  useRef,
+} from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -41,6 +48,11 @@ const searchClientCache = new Map<
   string,
   { data: SearchResult; timestamp: number }
 >();
+
+let analyticsClientCache: {
+  data: AnalyticsSummary;
+  timestamp: number;
+} | null = null;
 
 function HomePageContent() {
   const searchParams = useSearchParams();
@@ -302,13 +314,24 @@ function HomePageContent() {
     }
   }, [source, destination, filters]);
 
-  const fetchAnalytics = useCallback(async () => {
+  const fetchAnalytics = useCallback(async (force = false) => {
+    const now = Date.now();
+    if (
+      !force &&
+      analyticsClientCache &&
+      now - analyticsClientCache.timestamp < 60_000
+    ) {
+      setAnalytics(analyticsClientCache.data);
+      return;
+    }
+
     try {
       const res = await fetch("/api/analytics", {
         cache: "no-store",
       });
       if (res.ok) {
         const data = (await res.json()) as AnalyticsSummary;
+        analyticsClientCache = { data, timestamp: Date.now() };
         setAnalytics(data);
       }
     } catch (err) {
@@ -316,15 +339,17 @@ function HomePageContent() {
     }
   }, []);
 
-  // Fetch analytics once on mount
-  useEffect(() => {
-    fetchAnalytics();
-  }, [fetchAnalytics]);
+  const isInitialMount = useRef(true);
 
-  // Fetch transports when search/filters change
+  // Parallel initial data load with Promise.all
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      Promise.all([fetchTransports(), fetchAnalytics()]);
+      return;
+    }
     fetchTransports();
-  }, [fetchTransports]);
+  }, [fetchTransports, fetchAnalytics]);
 
   const handleSwap = () => {
     setSource(destination);
@@ -409,7 +434,8 @@ function HomePageContent() {
     }
 
     searchClientCache.clear();
-    await Promise.all([fetchTransports(), fetchAnalytics()]);
+    analyticsClientCache = null;
+    await Promise.all([fetchTransports(), fetchAnalytics(true)]);
   };
 
   const handleExportExcel = async () => {

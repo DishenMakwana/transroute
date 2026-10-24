@@ -40,6 +40,11 @@ import {
   DropdownOption,
 } from "@/types";
 
+const transportDetailClientCache = new Map<
+  string,
+  { data: TransportWithDetails; timestamp: number }
+>();
+
 export default function TransportDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -65,6 +70,21 @@ export default function TransportDetailPage() {
   const fetchTransport = useCallback(
     async (isManualRefresh = false) => {
       if (!id) return;
+
+      const now = Date.now();
+      const cached = transportDetailClientCache.get(id);
+      if (!isManualRefresh && cached && now - cached.timestamp < 60_000) {
+        setTransport(cached.data);
+        if (cached.data.pricing && cached.data.pricing.length > 0) {
+          setEstimator((prev) => ({
+            ...prev,
+            unit: prev.unit || cached.data.pricing[0].unit,
+          }));
+        }
+        setIsLoading(false);
+        return;
+      }
+
       setIsLoading(true);
 
       try {
@@ -75,11 +95,13 @@ export default function TransportDetailPage() {
         if (!res.ok) {
           if (res.status === 404) {
             setTransport(null);
+            transportDetailClientCache.delete(id);
             return;
           }
           throw new Error("Failed to load transport details");
         }
         const data: TransportWithDetails = await res.json();
+        transportDetailClientCache.set(id, { data, timestamp: Date.now() });
         setTransport(data);
 
         // Initialize estimator with first pricing rule if available
@@ -159,7 +181,8 @@ export default function TransportDetailPage() {
 
       toast.success("Carrier updated successfully!");
       setIsEditModalOpen(false);
-      fetchTransport();
+      transportDetailClientCache.delete(transport.id.toString());
+      fetchTransport(true);
     } catch (err: unknown) {
       const msg =
         err instanceof Error ? err.message : "Failed to update carrier";
@@ -182,6 +205,7 @@ export default function TransportDetailPage() {
       }
 
       toast.success(`Deleted ${transport.name}`);
+      transportDetailClientCache.delete(transport.id.toString());
       setIsDeleteModalOpen(false);
       router.push("/");
     } catch (err: unknown) {
